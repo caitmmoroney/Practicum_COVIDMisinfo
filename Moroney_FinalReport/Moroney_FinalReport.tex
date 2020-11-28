@@ -83,6 +83,8 @@ Enter the text of your abstract here.
 \keywords{
     COVID-19
    \and
+    coronavirus
+   \and
     NLP
    \and
     machine learning
@@ -93,73 +95,198 @@ Enter the text of your abstract here.
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-\lipsum[2]
-\lipsum[3]
+Insert introduction text here.
+
+The rest of the paper is organized as follows: Section \ref{sec:methods}
+discusses our methodology; Section \ref{sec:results} presents the
+results of our experiments; Section \ref{sec:discuss} discusses our
+results and plans for future work.
 
 \hypertarget{methodology}{%
 \section{Methodology}\label{methodology}}
 
-This paper explores a series of methods which seek to exploit linguistic
-features in raw text data in order to perform the automated detection of
-unreliable tweets. The experiments follow the same general framework
-with certain implementation details tweaked for each experiment. The
-first step in this framework is the application of NLP featurization
-methods to the raw tweet text. While different featurization methods are
-compared, all methods involve the use of NLP tools to represent the text
-with numeric features. Subsequently, latent variable methods are
-employed to reduce the dimensionality of the resulting X feature matrix
-(as well as to uncover latent variables). The latent variables are then
-used in the classification task. Finally, we evaluate the classification
-algorithms paired with the featurization methods with respect to
-performance and explainability. We use the typical performance metrics,
-including accuracy, F-score, precision, recall, and ROC-AUC. We use LIME
-to evaluate local explainability for non-interpretable methods.
-Furthermore, we present a new explainability framework for latent
-variable methods as well as a new explainability metric. Below, we
-explore in greater detail the methods used for featurization, latent
-variables, classification, and evaluation of explainability.
+\label{sec:methods} This paper explores a series of methods which seek
+to exploit linguistic features in raw text data in order to perform the
+automated detection of unreliable tweets. The experiments follow the
+same general framework with certain implementation details tweaked for
+each experiment. The first step in this framework is the application of
+NLP featurization methods to the raw tweet text. While different
+featurization methods are compared, all methods involve the use of NLP
+tools to represent the text with numeric features. Subsequently, latent
+variable methods are employed to reduce the dimensionality of the
+resulting X feature matrix (as well as to uncover latent variables). The
+latent variables are then used in the classification task. Finally, we
+evaluate the classification algorithms paired with the featurization
+methods with respect to performance and explainability. We use the
+typical performance metrics, including accuracy, F-score, precision,
+recall, and ROC-AUC. We use LIME to evaluate local explainability for
+non-interpretable methods. Furthermore, we present a new explainability
+framework for latent variable methods as well as a new explainability
+metric. Below, we explore in greater detail the methods used for
+featurization, latent variables, classification, and evaluation of
+explainability.
 
 \hypertarget{nlp-featurization}{%
 \subsection{NLP featurization}\label{nlp-featurization}}
 
+In order to obtain features from the raw tweet text, we first employed
+standard preprocessing, to include removing stop words and punctuation
+as well as lemmatizing words. The two approaches we pursued involved (1)
+Bag-of-Words and (2) word embeddings, each followed by latent variable
+methods.
+
+\hypertarget{bag-of-words}{%
+\subsubsection{Bag-of-Words}\label{bag-of-words}}
+
+\begin{itemize}
+\tightlist
+\item
+  Bag-of-Words + topic modeling
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Vectorization: raw counts, tf-idf, binary
+  \item
+    PCA + ICA
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{word-embeddings}{%
+\subsubsection{Word embeddings}\label{word-embeddings}}
+
+\begin{itemize}
+\tightlist
+\item
+  Word embeddings + topic modeling of word-context co-occurrence matrix
+
+  \begin{itemize}
+  \tightlist
+  \item
+    My embeddings
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Laplace smoothing
+    \item
+      raw counts, PMI, PPMI
+    \item
+      PCA + ICA
+    \end{itemize}
+  \item
+    BERT
+  \end{itemize}
+\end{itemize}
+
 \hypertarget{latent-variable-methods}{%
 \subsection{Latent variable methods}\label{latent-variable-methods}}
+
+\begin{itemize}
+\tightlist
+\item
+  Topic modeling
+\item
+  Word embeddings
+\end{itemize}
 
 \hypertarget{classification}{%
 \subsection{Classification}\label{classification}}
 
+\begin{itemize}
+\tightlist
+\item
+  One-class SVM
+\item
+  Binary SVM
+\end{itemize}
+
 \hypertarget{evaluation}{%
 \subsection{Evaluation}\label{evaluation}}
+
+\begin{itemize}
+\tightlist
+\item
+  Performance
+\item
+  Explainability
+
+  \begin{itemize}
+  \tightlist
+  \item
+    LIME (local)
+  \item
+    ICA
+
+    \begin{itemize}
+    \tightlist
+    \item
+      global
+    \item
+      local
+    \end{itemize}
+  \item
+    Metric I came up with
+  \end{itemize}
+\end{itemize}
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
+\label{sec:results} Report evaluation metrics for\ldots{}
+
+\begin{itemize}
+\tightlist
+\item
+  One-class SVM
+\item
+  Binary SVM
+\end{itemize}
+
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
 
-\hypertarget{headings-first-level}{%
-\section{Headings: first level}\label{headings-first-level}}
+\label{sec:discuss}
 
-\label{sec:headings}
+\begin{itemize}
+\tightlist
+\item
+  Interpret results
+\item
+  Future work
 
-\lipsum[4] See Section \ref{sec:headings}.
+  \begin{itemize}
+  \tightlist
+  \item
+    Better ICA explainability tool?
+  \item
+    Better explainability metric?
+  \item
+    Other classifiers (e.g., neural nets)
+  \item
+    Incorporate other features:
 
-\hypertarget{headings-second-level}{%
-\subsection{Headings: second level}\label{headings-second-level}}
+    \begin{itemize}
+    \tightlist
+    \item
+      Part-of-speech tag counts
+    \item
+      Punctuation counts
+    \item
+      Use of all-caps
+    \item
+      Sentiment analysis
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
 
-\lipsum[5]
-
-\[
+Misc. equation. \[
 \xi _{ij}(t)=P(x_{t}=i,x_{t+1}=j|y,v,w;\theta)= {\frac {\alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}{\sum _{i=1}^{N} \sum _{j=1}^{N} \alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}}
 \]
 
-\hypertarget{headings-third-level}{%
-\subsubsection{Headings: third level}\label{headings-third-level}}
-
-\lipsum[6]
-
 \paragraph{Paragraph}
-\lipsum[7]
+
+Misc. text.
 
 \hypertarget{examples-of-citations-figures-tables-references}{%
 \section{Examples of citations, figures, tables,
@@ -196,12 +323,8 @@ produces
 \hypertarget{figures}{%
 \subsection{Figures}\label{figures}}
 
-\lipsum[10]
-
-See Figure \ref{fig:fig1}. Here is how you add footnotes. {[}\^{}Sample
-of the first footnote.{]}
-
-\lipsum[11]
+Misc. text. See Figure \ref{fig:fig1}. Here is how you add footnotes.
+{[}\^{}Sample of the first footnote.{]}
 
 \begin{figure}
   \centering
@@ -221,7 +344,7 @@ of the first footnote.{]}
 \hypertarget{tables}{%
 \subsection{Tables}\label{tables}}
 
-\lipsum[12]
+Misc. text.
 
 See awesome Table\textasciitilde{}\ref{tab:table}.
 
@@ -241,20 +364,6 @@ See awesome Table\textasciitilde{}\ref{tab:table}.
   \end{tabular}
   \label{tab:table}
 \end{table}
-
-\hypertarget{lists}{%
-\subsection{Lists}\label{lists}}
-
-\begin{itemize}
-\tightlist
-\item
-  Lorem ipsum dolor sit amet
-\item
-  consectetur adipiscing elit.
-\item
-  Aliquam dignissim blandit est, in dictum tortor gravida eget. In ac
-  rutrum magna.
-\end{itemize}
 
 \hypertarget{references}{%
 \section*{References}\label{references}}
