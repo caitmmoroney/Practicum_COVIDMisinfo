@@ -114,9 +114,9 @@ NLP featurization methods to the raw tweet text. While different
 featurization methods are compared, all methods involve the use of NLP
 tools to represent the text with numeric features. Subsequently, latent
 variable methods are employed to reduce the dimensionality of the
-resulting X feature matrix (as well as to uncover latent variables). The
-latent variables are then used in the classification task. Finally, we
-evaluate the classification algorithms paired with the featurization
+resulting \(X\) feature matrix (as well as to uncover latent variables).
+The latent variables are then used in the classification task. Finally,
+we evaluate the classification algorithms paired with the featurization
 methods with respect to performance and explainability. We use the
 typical performance metrics, including accuracy, F-score, precision,
 recall, and ROC-AUC. We use LIME to evaluate local explainability for
@@ -152,43 +152,109 @@ methods.
   \end{itemize}
 \end{itemize}
 
+After constructing the Bag-of-Words matrix, we employed topic modeling
+to reduce the dimensionality of the \(Nxp\) matrix.
+
 \hypertarget{word-embeddings}{%
 \subsubsection{Word embeddings}\label{word-embeddings}}
+
+To create word embeddings, we used the word-context co-occurrence matrix
+which, unlike the Bag-of-Words method, is able to incorporate
+information about context from the raw text data. We trained the
+embeddings on the full set of 560 tweets. With the Bag-of-Words methods,
+we are able to encode information about words' presence in a given
+document; the co-occurrence approach improves upon this by allowing us
+to look at word usage with respect to the presence of other words. We
+constructed a word-context co-occurrence matrix using the entire
+vocabulary for both target terms and context terms. In other words, the
+matrix was symmetric. We incorporated a number of hyperparameters
+related to the construction and subsequent transformation of this
+matrix, including context window size, the use of raw counts or
+variations on the Pointwise Mutual Information (PMI), and Laplace
+smoothing. We also included ``\textless START\textgreater{}'' and
+``\textless END\textgreater{}'' tokens at the beginning and end of each
+tweet.
 
 \begin{itemize}
 \tightlist
 \item
-  Word embeddings + topic modeling of word-context co-occurrence matrix
+  Context window size
+\end{itemize}
 
-  \begin{itemize}
-  \tightlist
-  \item
-    My embeddings
+Window size refers to the number of tokens before and after the target
+word are scanned for context words. According to some sources, a window
+size of four or larger captures semantic representations of the words,
+whereas smaller windows capture more syntactic representations.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      Laplace smoothing
-    \item
-      raw counts, PMI, PPMI
-    \item
-      PCA + ICA
-    \end{itemize}
-  \item
-    BERT
-  \end{itemize}
+\begin{itemize}
+\tightlist
+\item
+  Raw counts vs PMI (or PPMI)
+\item
+  Shifted vs unshifted PMI (or PPMI)
+\item
+  Laplace smoothing
+\item
+  Use of start \& end tokens
+\end{itemize}
+
+Latent variable methods were subsequently applied to the word embeddings
+in order to reduce the dimensionality.
+
+Finally, we averaged over the word embeddings for the words in each
+tweet to obtain a single vector representation for each tweet.
+
+Overall, it seemed that larger context windows prevailed - a window size
+of 15 +/- performed the best (I tried window sizes of 1, 2, 4, 6, 10,
+15, and 20). I find this interesting because tweets are such short posts
+(perhaps 30 words encompasses the entirety of the tweet for most
+tweets). Incorporating add-one Laplace smoothing and shifted {[}P{]}PMI
+decreased performance across all metrics (accuracy, precision, recall,
+ROC AUC, and F1 score). Interestingly, PMI often outperformed not only
+raw frequencies but also PPMI (positive PMI). However, with other
+optimal hyperparameters held constant, there was virtually no difference
+in performance between PMI and PPMI. Optimal text cleaning included
+removing special characters which were not punctuation (parentheses,
+question marks, exclamation points, periods, commas, hyphens, colons,
+and semicolons) or alphanumeric characters (letters or numbers),
+converting all text to lowercase, removing stop words, and lemmatizing
+words (using NLTK's WordNetLemmatizer aided by NLTK's part-of-speech
+tagger).
+
+\textbf{The best results included ROC AUC of 0.94, accuracy of 0.89, F1
+score of 0.90, precision of 0.86, and recall of 0.94. These scores are
+all higher than the best results from last week and were obtained using
+the same nested CV procedure (3 folds for inner loop; 5 folds for outer
+loop).} NOTE: These should be replaced with the correct numbers.
+
+\begin{itemize}
+\tightlist
+\item
+  BERT embeddings from pre-trained model
 \end{itemize}
 
 \hypertarget{latent-variable-methods}{%
 \subsection{Latent variable methods}\label{latent-variable-methods}}
 
+In order to reduce the dimensionality of the feature matrix \(X\), we
+employed latent variable methods. Specifically, we applied Principal
+Component Analysis (PCA) followed by Independent Component Analysis
+(ICA) to both the Bag-of-Words matrix and the word-context co-occurrence
+matrix.
+
 \begin{itemize}
-\tightlist
 \item
-  Topic modeling
+  Explain PCA
 \item
-  Word embeddings
+  Explain ICA
+\item
+  Topic modeling application explanation
+\item
+  Word embeddings application explanation
 \end{itemize}
+
+The number of components is also up for question - it seems that people
+use values anywhere from 50 to 1,000.
 
 \hypertarget{classification}{%
 \subsection{Classification}\label{classification}}
@@ -257,6 +323,10 @@ methods.
 
   \begin{itemize}
   \tightlist
+  \item
+    Different ICA algorithm (not FastICA)
+  \item
+    Multiple ICA runs + take most representative of those
   \item
     Better ICA explainability tool?
   \item
