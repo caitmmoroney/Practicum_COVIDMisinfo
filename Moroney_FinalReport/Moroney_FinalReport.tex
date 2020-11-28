@@ -96,6 +96,47 @@ Enter the text of your abstract here.
 \lipsum[2]
 \lipsum[3]
 
+\hypertarget{methodology}{%
+\section{Methodology}\label{methodology}}
+
+This paper explores a series of methods which seek to exploit linguistic
+features in raw text data in order to perform the automated detection of
+unreliable tweets. The experiments follow the same general framework
+with certain implementation details tweaked for each experiment. The
+first step in this framework is the application of NLP featurization
+methods to the raw tweet text. While different featurization methods are
+compared, all methods involve the use of NLP tools to represent the text
+with numeric features. Subsequently, latent variable methods are
+employed to reduce the dimensionality of the resulting X feature matrix
+(as well as to uncover latent variables). The latent variables are then
+used in the classification task. Finally, we evaluate the classification
+algorithms paired with the featurization methods with respect to
+performance and explainability. We use the typical performance metrics,
+including accuracy, F-score, precision, recall, and ROC-AUC. We use LIME
+to evaluate local explainability for non-interpretable methods.
+Furthermore, we present a new explainability framework for latent
+variable methods as well as a new explainability metric. Below, we
+explore in greater detail the methods used for featurization, latent
+variables, classification, and evaluation of explainability.
+
+\hypertarget{nlp-featurization}{%
+\subsection{NLP featurization}\label{nlp-featurization}}
+
+\hypertarget{latent-variable-methods}{%
+\subsection{Latent variable methods}\label{latent-variable-methods}}
+
+\hypertarget{classification}{%
+\subsection{Classification}\label{classification}}
+
+\hypertarget{evaluation}{%
+\subsection{Evaluation}\label{evaluation}}
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
+
 \hypertarget{headings-first-level}{%
 \section{Headings: first level}\label{headings-first-level}}
 
@@ -214,6 +255,10 @@ See awesome Table\textasciitilde{}\ref{tab:table}.
   Aliquam dignissim blandit est, in dictum tortor gravida eget. In ac
   rutrum magna.
 \end{itemize}
+
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
 \leavevmode\hypertarget{ref-hadash2018estimate}{}%
