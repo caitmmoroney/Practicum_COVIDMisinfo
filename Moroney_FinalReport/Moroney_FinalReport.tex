@@ -296,6 +296,12 @@ use values anywhere from 50 to 1,000.
   \end{itemize}
 \end{itemize}
 
+Penalty: \[
+\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} 1_A(w_j) - 1_B(w_j)
+\] No Penalty: \[
+\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} 1_A(w_j)
+\]
+
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
