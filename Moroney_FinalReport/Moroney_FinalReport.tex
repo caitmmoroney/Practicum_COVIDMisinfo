@@ -196,11 +196,11 @@ loop).} NOTE: These should be replaced with the correct numbers.
 \hypertarget{latent-variable-methods}{%
 \subsection{Latent variable methods}\label{latent-variable-methods}}
 
-In order to reduce the dimensionality of the feature matrix
-\(\mathbf{X}\), we employed latent variable methods. Specifically, we
-applied Principal Component Analysis (PCA) followed by Independent
-Component Analysis (ICA) to both the Bag-of-Words matrix and the
-word-context co-occurrence matrix.
+In order to reduce the dimensionality of the data matrix \(\mathbf{X}\),
+we employed latent variable methods. Specifically, we applied Principal
+Component Analysis (PCA) followed by Independent Component Analysis
+(ICA) to both the Bag-of-Words matrix and the word-context co-occurrence
+matrix.
 
 In order to perform PCA, we rescale the data matrix and then apply
 Singular Value Decomposition (SVD). We first scale the data so that the
@@ -209,11 +209,12 @@ columns have zero mean and unit variance. The SVD model is as follows:
 matrix containing the singular values of \(\mathbf{X}\), \(\mathbf{U}\)
 is BLAH, and \(\mathbf{V}^T\) is BLAHBLAH.
 
-In essence, we use SVD and keep only the rows of \(\mathbf{U}\) and
-\(\mathbf{V}^T\) that correspond to the largest \(k\) singular values in
-the diagonal matrix \(\mathbf{\Sigma}\), where \(k\) is the desired
-order for the approximation of our initial data matrix. Therefore, if
-\(k\) is less than ??? we have achieved dimensionality reduction.
+To achieve PCA, we can use truncated SVD. In essence, we perform SVD and
+keep only the columns of \(\mathbf{U}\) and \(\mathbf{V}^T\) that
+correspond to the largest \(k\) singular values in the diagonal matrix
+\(\mathbf{\Sigma}\), where \(k\) is the desired order for the
+approximation of our initial data matrix. Therefore, if \(k\) is less
+than \(m\), we have achieved dimensionality reduction.
 
 \begin{itemize}
 \tightlist
@@ -229,21 +230,39 @@ The pipeline involves performing SVD on the initial data matrix,
 contains the SVD feature vectors. This matrix is used as the input for
 ICA, so that we have \(\mathbf{U = AS}\). Then, \(\mathbf{S}\) is the
 whitened mixing matrix, and \(\mathbf{A}\) contains the ICA features.
-This process is represented visually in figure XXXX.
+This process is represented visually in Figure \ref{fig:matdec}. We use
+the estimated \(\mathbf{\hat{A}}\) matrix as the input to our
+classification models.
 
 The only difference between the topic modeling approach and the word
 embedding approach is the structure of the original data matrix
-\(\mathbf{X}\) obtained from the chosen NLP featurization method. For
-topic modeling, we start with a documents by terms matrix and end up
-with ICA features which are linear combinations of SVD features which
-are in turn linear combinations of terms (hence, topics). When we start
-with the word-context co-occurrence matrix, we obtain word embeddings,
-which are vectors of ICA features which are linear combinations of SVD
-features which are in turn linear combinations of context terms (again,
-we can think of these as topics).
+\(\mathbf{X}\) obtained from the chosen NLP featurization method. In one
+case, we obtain vector representations for documents; in the other, we
+obtain vector representations for terms. For topic modeling, we start
+with a documents by terms matrix and end up with ICA features which are
+linear combinations of SVD features which are in turn linear
+combinations of terms (hence, topics). When we start with the
+word-context co-occurrence matrix, we obtain word embeddings, which are
+vectors of ICA features which are linear combinations of SVD features
+which are in turn linear combinations of context terms (again, we can
+think of these as topics).
 
 The number of components is also up for question - it seems that people
 use values anywhere from 50 to 1,000.
+
+\begin{figure}
+  \centering
+  \matbox{5}{7}{n}{m}{X} = 
+  \matbox{5}{3}{n}{k}{U} \raiserows{1}{\matbox{3}{3}{k}{k}{\Sigma}}
+  \raiserows{1}{\matbox{3}{7}{k}{m}{V^T}}
+  \newline
+  \newline
+  \newline
+  \matbox{5}{3}{n}{k}{U} = 
+  \matbox{5}{3}{n}{p}{A} \raiserows{1}{\matbox{3}{3}{p}{k}{S}}
+  \caption{Truncated Singular Value Decomposition followed by Independent Componenet Analysis.}
+  \label{fig:matdec}
+\end{figure}
 
 \hypertarget{classification}{%
 \subsection{Classification}\label{classification}}
