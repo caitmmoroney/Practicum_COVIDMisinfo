@@ -79,12 +79,12 @@ variables). The latent variables are then used in the classification
 task. Finally, we evaluate the classification algorithms paired with the
 featurization methods with respect to performance and explainability. We
 use the typical performance metrics, including accuracy, F-score,
-precision, recall, and ROC-AUC. We use LIME to evaluate local
-explainability for non-interpretable methods. Furthermore, we present a
-new explainability framework for latent variable methods as well as a
-new explainability metric. Below, we explore in greater detail the
-methods used for featurization, latent variables, classification, and
-evaluation of explainability.
+precision, recall, and ROC-AUC. We use LIME (Ribeiro, Singh, and
+Guestrin 2016) to evaluate local explainability for non-interpretable
+methods. Furthermore, we present a new explainability framework for
+latent variable methods as well as a new explainability metric. Below,
+we explore in greater detail the methods used for featurization, latent
+variables, classification, and evaluation of explainability.
 
 \hypertarget{nlp-featurization}{%
 \subsection{NLP featurization}\label{nlp-featurization}}
@@ -197,10 +197,11 @@ loop).} NOTE: These should be replaced with the correct numbers.
 \subsection{Latent variable methods}\label{latent-variable-methods}}
 
 In order to reduce the dimensionality of the data matrix \(\mathbf{X}\),
-we employed latent variable methods. Specifically, we applied Principal
-Component Analysis (PCA) followed by Independent Component Analysis
-(ICA) to both the Bag-of-Words matrix and the word-context co-occurrence
-matrix.
+we employed latent variable methods. Specifically, we followed the
+methodology presented in Honkela, Hyvärinen, and Väyrynen (2010): we
+applied Principal Component Analysis (PCA) followed by Independent
+Component Analysis (ICA) to both the Bag-of-Words matrix and the
+word-context co-occurrence matrix.
 
 In order to perform PCA, we rescale the data matrix and then apply
 Singular Value Decomposition (SVD). We first scale the data so that the
@@ -278,31 +279,53 @@ use values anywhere from 50 to 1,000.
 \hypertarget{evaluation}{%
 \subsection{Evaluation}\label{evaluation}}
 
-\begin{itemize}
-\tightlist
-\item
-  Performance
-\item
-  Explainability
+In order to evaluate our experiments, including featurization methods
+and classification algorithms, we have identified three areas for
+comparison: performance, computational complexity, and explainability.
+To measure performance, we employ the standard suite of evaluation
+metrics, i.e., accuracy, F-score, precision, recall, and ROC-AUC. We
+report the macro-averaged versions of these scores. Computational
+complexity is easily captured by the amount of time taken for training
+and testing. Evaluating the explainability of one method versus another
+proves to be a more complicated task. For the experiments using word
+embeddings obtained from the pretrained BERT model, we use LIME
+(Ribeiro, Singh, and Guestrin 2016) to obtain local explanations for
+tweet predictions. For the ICA word embeddings, we propose a new
+framework to obtain global and local explanations for tweet predictions
+which derive from the ICA matrix decomposition. In order to then compare
+overall explainability for one method versus another, we have devised a
+metric which captures information from the LIME and ICA local
+explanations and aggregates these values to produce a single number
+representing an explainability score. This allows us to compare two
+methods with respect to explainability in the same way that we might
+compare them in terms of accuracy or precision.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    LIME (local)
-  \item
-    ICA
+\hypertarget{lime}{%
+\subsubsection{LIME}\label{lime}}
 
-    \begin{itemize}
-    \tightlist
-    \item
-      global
-    \item
-      local
-    \end{itemize}
-  \item
-    Metric I came up with
-  \end{itemize}
-\end{itemize}
+Explain LIME.
+
+\hypertarget{ica}{%
+\subsubsection{ICA}\label{ica}}
+
+Explain ICA explainability.
+
+\hypertarget{global}{%
+\paragraph{Global}\label{global}}
+
+\hypertarget{local}{%
+\paragraph{Local}\label{local}}
+
+\hypertarget{explainability-metric}{%
+\subsubsection{Explainability metric}\label{explainability-metric}}
+
+As mentioned above, our initial motivation in pursuing explainability
+was to provide an evaluation metric which would allow us to compare the
+overall explainability of one model and featurization method with that
+of another. The final result of this effort is a novel metric which
+allows us to incorporate the LIME (Ribeiro, Singh, and Guestrin 2016)
+and ICA explainability output into a single score which represents the
+overall explainability as an aggregation of local explanations.
 
 Penalty: \[
 \frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j) - \mathbbm{1}_B(w_j)
@@ -384,8 +407,6 @@ references}\label{examples-of-citations-figures-tables-references}}
 
 \label{sec:others}
 
-some text (Kour and Saabne 2014b, 2014a) and see Hadash et al. (2018).
-
 The documentation for \verb+natbib+ may be found at
 
 \begin{center}
@@ -408,19 +429,6 @@ produces
 \begin{center}
   \url{https://www.ctan.org/pkg/booktabs}
 \end{center}
-
-\hypertarget{figures}{%
-\subsection{Figures}\label{figures}}
-
-Misc. text. See Figure \ref{fig:fig1}. Here is how you add footnotes.
-{[}\^{}Sample of the first footnote.{]}
-
-\begin{figure}
-  \centering
-  \fbox{\rule[-.5cm]{4cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-  \caption{Sample figure caption.}
-  \label{fig:fig1}
-\end{figure}
 
 \hypertarget{tables}{%
 \subsection{Tables}\label{tables}}
@@ -451,22 +459,17 @@ See awesome Table\textasciitilde{}\ref{tab:table}.
 \addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
-\leavevmode\hypertarget{ref-hadash2018estimate}{}%
-Hadash, Guy, Einat Kermany, Boaz Carmeli, Ofer Lavi, George Kour, and
-Alon Jacovi. 2018. ``Estimate and Replace: A Novel Approach to
-Integrating Deep Neural Networks with Existing Applications.''
-\emph{arXiv Preprint arXiv:1804.09028}.
+\leavevmode\hypertarget{ref-honkela_wordicaemergence_2010}{}%
+Honkela, Timo, Aapo Hyvärinen, and Jaakko J. Väyrynen. 2010.
+``WordICA---Emergence of Linguistic Representations for Words by
+Independent Component Analysis.'' \emph{Natural Language Engineering} 16
+(3): 277--308. \url{https://doi.org/10.1017/S1351324910000057}.
 
-\leavevmode\hypertarget{ref-kour2014fast}{}%
-Kour, George, and Raid Saabne. 2014a. ``Fast Classification of
-Handwritten on-Line Arabic Characters.'' In \emph{Soft Computing and
-Pattern Recognition (Socpar), 2014 6th International Conference of},
-312--18. IEEE.
-
-\leavevmode\hypertarget{ref-kour2014real}{}%
----------. 2014b. ``Real-Time Segmentation of on-Line Handwritten Arabic
-Script.'' In \emph{Frontiers in Handwriting Recognition (Icfhr), 2014
-14th International Conference on}, 417--22. IEEE.
+\leavevmode\hypertarget{ref-ribeiro_why_2016}{}%
+Ribeiro, Marco Tulio, Sameer Singh, and Carlos Guestrin. 2016. ``"Why
+Should I Trust You?": Explaining the Predictions of Any Classifier.''
+\emph{arXiv:1602.04938 {[}Cs, Stat{]}}, August.
+\url{http://arxiv.org/abs/1602.04938}.
 
 \bibliographystyle{unsrt}
 \bibliography{references.bib}

@@ -29,7 +29,7 @@ The rest of the paper is organized as follows: Section \ref{sec:methods} discuss
 
 # Methodology
 \label{sec:methods}
-This paper explores a series of methods which seek to exploit linguistic features in raw text data in order to perform the automated detection of unreliable tweets. The experiments follow the same general framework with certain implementation details tweaked for each experiment. The first step in this framework is the application of NLP featurization methods to the raw tweet text. While different featurization methods are compared, all methods involve the use of NLP tools to represent the text with numeric features. Subsequently, latent variable methods are employed to reduce the dimensionality of the resulting $\mathbf{X}$ feature matrix (as well as to uncover latent variables). The latent variables are then used in the classification task. Finally, we evaluate the classification algorithms paired with the featurization methods with respect to performance and explainability. We use the typical performance metrics, including accuracy, F-score, precision, recall, and ROC-AUC. We use LIME to evaluate local explainability for non-interpretable methods. Furthermore, we present a new explainability framework for latent variable methods as well as a new explainability metric. Below, we explore in greater detail the methods used for featurization, latent variables, classification, and evaluation of explainability.
+This paper explores a series of methods which seek to exploit linguistic features in raw text data in order to perform the automated detection of unreliable tweets. The experiments follow the same general framework with certain implementation details tweaked for each experiment. The first step in this framework is the application of NLP featurization methods to the raw tweet text. While different featurization methods are compared, all methods involve the use of NLP tools to represent the text with numeric features. Subsequently, latent variable methods are employed to reduce the dimensionality of the resulting $\mathbf{X}$ feature matrix (as well as to uncover latent variables). The latent variables are then used in the classification task. Finally, we evaluate the classification algorithms paired with the featurization methods with respect to performance and explainability. We use the typical performance metrics, including accuracy, F-score, precision, recall, and ROC-AUC. We use LIME [@ribeiro_why_2016] to evaluate local explainability for non-interpretable methods. Furthermore, we present a new explainability framework for latent variable methods as well as a new explainability metric. Below, we explore in greater detail the methods used for featurization, latent variables, classification, and evaluation of explainability.
 
 ## NLP featurization
 In order to obtain features from the raw tweet text, we first employed standard preprocessing, to include removing stop words and punctuation as well as lemmatizing words. The two approaches we pursued involved (1) Bag-of-Words and (2) word embeddings, each followed by latent variable methods.
@@ -65,7 +65,7 @@ Overall, it seemed that larger context windows prevailed - a window size of 15 +
 - BERT embeddings from pre-trained model
 
 ## Latent variable methods
-In order to reduce the dimensionality of the data matrix $\mathbf{X}$, we employed latent variable methods. Specifically, we applied Principal Component Analysis (PCA) followed by Independent Component Analysis (ICA) to both the Bag-of-Words matrix and the word-context co-occurrence matrix.
+In order to reduce the dimensionality of the data matrix $\mathbf{X}$, we employed latent variable methods. Specifically, we followed the methodology presented in @honkela_wordicaemergence_2010: we applied Principal Component Analysis (PCA) followed by Independent Component Analysis (ICA) to both the Bag-of-Words matrix and the word-context co-occurrence matrix.
 
 In order to perform PCA, we rescale the data matrix and then apply Singular Value Decomposition (SVD). We first scale the data so that the columns have zero mean and unit variance. The SVD model is as follows:
 $$\mathbf{X = U \Sigma V}^T$$
@@ -103,13 +103,20 @@ The number of components is also up for question - it seems that people use valu
 - Binary SVM
 
 ## Evaluation
-- Performance
-- Explainability
-    - LIME (local)
-    - ICA
-        - global
-        - local
-    - Metric I came up with
+In order to evaluate our experiments, including featurization methods and classification algorithms, we have identified three areas for comparison: performance, computational complexity, and explainability. To measure performance, we employ the standard suite of evaluation metrics, i.e., accuracy, F-score, precision, recall, and ROC-AUC. We report the macro-averaged versions of these scores. Computational complexity is easily captured by the amount of time taken for training and testing. Evaluating the explainability of one method versus another proves to be a more complicated task. For the experiments using word embeddings obtained from the pretrained BERT model, we use LIME [@ribeiro_why_2016] to obtain local explanations for tweet predictions. For the ICA word embeddings, we propose a new framework to obtain global and local explanations for tweet predictions which derive from the ICA matrix decomposition. In order to then compare overall explainability for one method versus another, we have devised a metric which captures information from the LIME and ICA local explanations and aggregates these values to produce a single number representing an explainability score. This allows us to compare two methods with respect to explainability in the same way that we might compare them in terms of accuracy or precision.
+
+### LIME
+Explain LIME.
+
+### ICA
+Explain ICA explainability.
+
+#### Global
+
+#### Local
+
+### Explainability metric
+As mentioned above, our initial motivation in pursuing explainability was to provide an evaluation metric which would allow us to compare the overall explainability of one model and featurization method with that of another. The final result of this effort is a novel metric which allows us to incorporate the LIME [@ribeiro_why_2016] and ICA explainability output into a single score which represents the overall explainability as an aggregation of local explanations.
 
 Penalty:
 $$
@@ -152,8 +159,6 @@ Misc. text.
 # Examples of citations, figures, tables, references
 \label{sec:others}
 
-some text [@kour2014real; @kour2014fast] and see @hadash2018estimate.
-
 The documentation for \verb+natbib+ may be found at
 \begin{center}
   \url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
@@ -174,18 +179,6 @@ produces
 \begin{center}
   \url{https://www.ctan.org/pkg/booktabs}
 \end{center}
-
-## Figures
-
-Misc. text. 
-See Figure \ref{fig:fig1}. Here is how you add footnotes. [^Sample of the first footnote.]
-
-\begin{figure}
-  \centering
-  \fbox{\rule[-.5cm]{4cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-  \caption{Sample figure caption.}
-  \label{fig:fig1}
-\end{figure}
 
 ## Tables
 
