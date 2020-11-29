@@ -286,7 +286,7 @@ use values anywhere from 50 to 1,000.
 \end{itemize}
 
 Penalty: \[
-\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} 1_A(w_j) - 1_B(w_j)
+\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j) - \mathbbm{1}_B(w_j)
 \] where \(A\) is the set of words that the classifier associated with
 the correct class (e.g., tweet \(i\) is labeled as ``reliable,'' and the
 classifier classified the tweet as ``reliable'') according to the LIME
@@ -296,7 +296,7 @@ associated with the wrong class according to the LIME output for tweet
 tweets.
 
 No Penalty: \[
-\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} 1_A(w_j)
+\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j)
 \] where \(A\) is the set of words that the classifier associated with
 the correct class according to the LIME output for tweet \(i\), there
 are \(T_i\) words in tweet \(i\), and there are \(N\) tweets.
