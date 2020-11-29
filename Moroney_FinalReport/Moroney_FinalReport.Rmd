@@ -19,6 +19,8 @@ bibliography: references.bib
 output: 
   rticles::arxiv_article:
     keep_tex: true
+    includes:
+      in_header: mystyles.sty
 ---
 
 # Introduction
@@ -29,7 +31,7 @@ The rest of the paper is organized as follows: Section \ref{sec:methods} discuss
 
 # Methodology
 \label{sec:methods}
-This paper explores a series of methods which seek to exploit linguistic features in raw text data in order to perform the automated detection of unreliable tweets. The experiments follow the same general framework with certain implementation details tweaked for each experiment. The first step in this framework is the application of NLP featurization methods to the raw tweet text. While different featurization methods are compared, all methods involve the use of NLP tools to represent the text with numeric features. Subsequently, latent variable methods are employed to reduce the dimensionality of the resulting $X$ feature matrix (as well as to uncover latent variables). The latent variables are then used in the classification task. Finally, we evaluate the classification algorithms paired with the featurization methods with respect to performance and explainability. We use the typical performance metrics, including accuracy, F-score, precision, recall, and ROC-AUC. We use LIME to evaluate local explainability for non-interpretable methods. Furthermore, we present a new explainability framework for latent variable methods as well as a new explainability metric. Below, we explore in greater detail the methods used for featurization, latent variables, classification, and evaluation of explainability.
+This paper explores a series of methods which seek to exploit linguistic features in raw text data in order to perform the automated detection of unreliable tweets. The experiments follow the same general framework with certain implementation details tweaked for each experiment. The first step in this framework is the application of NLP featurization methods to the raw tweet text. While different featurization methods are compared, all methods involve the use of NLP tools to represent the text with numeric features. Subsequently, latent variable methods are employed to reduce the dimensionality of the resulting $\mathbf{X}$ feature matrix (as well as to uncover latent variables). The latent variables are then used in the classification task. Finally, we evaluate the classification algorithms paired with the featurization methods with respect to performance and explainability. We use the typical performance metrics, including accuracy, F-score, precision, recall, and ROC-AUC. We use LIME to evaluate local explainability for non-interpretable methods. Furthermore, we present a new explainability framework for latent variable methods as well as a new explainability metric. Below, we explore in greater detail the methods used for featurization, latent variables, classification, and evaluation of explainability.
 
 ## NLP featurization
 In order to obtain features from the raw tweet text, we first employed standard preprocessing, to include removing stop words and punctuation as well as lemmatizing words. The two approaches we pursued involved (1) Bag-of-Words and (2) word embeddings, each followed by latent variable methods.
@@ -65,14 +67,22 @@ Overall, it seemed that larger context windows prevailed - a window size of 15 +
 - BERT embeddings from pre-trained model
 
 ## Latent variable methods
-In order to reduce the dimensionality of the feature matrix $X$, we employed latent variable methods. Specifically, we applied Principal Component Analysis (PCA) followed by Independent Component Analysis (ICA) to both the Bag-of-Words matrix and the word-context co-occurrence matrix.
+In order to reduce the dimensionality of the feature matrix $\mathbf{X}$, we employed latent variable methods. Specifically, we applied Principal Component Analysis (PCA) followed by Independent Component Analysis (ICA) to both the Bag-of-Words matrix and the word-context co-occurrence matrix.
 
-- Explain PCA
+In order to perform PCA, we rescale the data matrix and then apply Singular Value Decomposition (SVD). We first scale the data so that the columns have zero mean and unit variance. The SVD model is as follows:
+$$\mathbf{X = U \Sigma V}^T$$
+where $\mathbf{\Sigma}$ is a diagonal matrix containing the singular values of $\mathbf{X}$, $\mathbf{U}$ is BLAH, and $\mathbf{V}^T$ is BLAHBLAH.
+
+In essence, we use SVD and keep only the rows of $\mathbf{U}$ and $\mathbf{V}^T$ that correspond to the largest $k$ singular values in the diagonal matrix $\mathbf{\Sigma}$, where $k$ is the desired order for the approximation of our initial data matrix. Therefore, if $k$ is less than ??? we have achieved dimensionality reduction.
+
 - Explain ICA
 
-- Topic modeling application explanation
+The ICA model can be represented in matrix form as follows:
+$$\mathbf{X = AS}$$
 
-- Word embeddings application explanation
+The pipeline involves performing SVD on the initial data matrix, $\mathbf{X}$, such that we can obtain the $\mathbf{U}$ matrix which contains the SVD feature vectors. This matrix is used as the input for ICA, so that we have $\mathbf{U = AS}$. Then, $\mathbf{S}$ is the whitened mixing matrix, and $\mathbf{A}$ contains the ICA features. This process is represented visually in figure XXXX.
+
+The only difference between the topic modeling approach and the word embedding approach is the structure of the original data matrix $\mathbf{X}$ obtained from the chosen NLP featurization method. For topic modeling, we start with a documents by terms matrix and end up with ICA features which are linear combinations of SVD features which are in turn linear combinations of terms (hence, topics). When we start with the word-context co-occurrence matrix, we obtain word embeddings, which are vectors of ICA features which are linear combinations of SVD features which are in turn linear combinations of context terms (again, we can think of these as topics).
 
 The number of components is also up for question - it seems that people use values anywhere from 50 to 1,000.
 
@@ -93,10 +103,13 @@ Penalty:
 $$
 \frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} 1_A(w_j) - 1_B(w_j)
 $$
+where $A$ is the set of words that the classifier associated with the correct class (e.g., tweet $i$ is labeled as “reliable,” and the classifier classified the tweet as “reliable”) according to the LIME output for tweet $i$, $B$ is the set of words that the classifier associated with the wrong class according to the LIME output for tweet $i$, there are $T_i$ words in tweet $i$, and there are $N$ tweets.
+
 No Penalty:
 $$
 \frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} 1_A(w_j)
 $$
+where $A$ is the set of words that the classifier associated with the correct class according to the LIME output for tweet $i$, there are $T_i$ words in tweet $i$, and there are $N$ tweets.
 
 # Results
 \label{sec:results}
@@ -121,18 +134,13 @@ Report evaluation metrics for...
         - Use of all-caps
         - Sentiment analysis
 
-Misc. equation.
-$$
-\xi _{ij}(t)=P(x_{t}=i,x_{t+1}=j|y,v,w;\theta)= {\frac {\alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}{\sum _{i=1}^{N} \sum _{j=1}^{N} \alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}}
-$$
-
 \paragraph{Paragraph}
 Misc. text.
 
 # Examples of citations, figures, tables, references
 \label{sec:others}
 
-\lipsum[8] some text [@kour2014real; @kour2014fast] and see @hadash2018estimate.
+some text [@kour2014real; @kour2014fast] and see @hadash2018estimate.
 
 The documentation for \verb+natbib+ may be found at
 \begin{center}
@@ -166,10 +174,6 @@ See Figure \ref{fig:fig1}. Here is how you add footnotes. [^Sample of the first 
   \caption{Sample figure caption.}
   \label{fig:fig1}
 \end{figure}
-
-```{r}
-plot(mtcars$mpg)
-```
 
 ## Tables
 
