@@ -105,6 +105,8 @@ The number of components is also up for question - it seems that people use valu
 ## Evaluation
 In order to evaluate our experiments, including featurization methods and classification algorithms, we have identified three areas for comparison: performance, computational complexity, and explainability. To measure performance, we employ the standard suite of evaluation metrics, i.e., accuracy, F-score, precision, recall, and ROC-AUC. We report the macro-averaged versions of these scores. Computational complexity is easily captured by the amount of time taken for training and testing. Evaluating the explainability of one method versus another proves to be a more complicated task. For the experiments using word embeddings obtained from the pretrained BERT model, we use LIME [@ribeiro_why_2016] to obtain local explanations for tweet predictions. For the ICA word embeddings, we propose a new framework to obtain global and local explanations for tweet predictions which derive from the ICA matrix decomposition. In order to then compare overall explainability for one method versus another, we have devised a metric which captures information from the LIME and ICA local explanations and aggregates these values to produce a single number representing an explainability score. This allows us to compare two methods with respect to explainability in the same way that we might compare them in terms of accuracy or precision.
 
+Our goal with assessing explainability is to determine whether the machine learning pipeline is making what we would consider intuitive decisions. In other words, when a human and the machine look at the same tweet, we are not only interested in knowing whether the machine can make the same classification as the human (which we can measure with accuracy), but we are also interested in knowing whether the machine and the human make the same judgment for similar reasons.
+
 ### LIME
 Explain LIME.
 
@@ -117,6 +119,8 @@ Explain ICA explainability.
 
 ### Explainability metric
 As mentioned above, our initial motivation in pursuing explainability was to provide an evaluation metric which would allow us to compare the overall explainability of one model and featurization method with that of another. The final result of this effort is a novel metric which allows us to incorporate the LIME [@ribeiro_why_2016] and ICA explainability output into a single score which represents the overall explainability as an aggregation of local explanations.
+
+Because our conception of explainability inherently relies on a comparison to human decision-making, our explainability metric takes an input which captures the rules our coders used to label our set of tweets. This input is in the form of a vocabulary list which comprises words that fall under the rules in Table 1 from @boukouvalas_independent_2020.
 
 Penalty:
 $$

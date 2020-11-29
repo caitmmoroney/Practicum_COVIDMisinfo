@@ -300,6 +300,14 @@ representing an explainability score. This allows us to compare two
 methods with respect to explainability in the same way that we might
 compare them in terms of accuracy or precision.
 
+Our goal with assessing explainability is to determine whether the
+machine learning pipeline is making what we would consider intuitive
+decisions. In other words, when a human and the machine look at the same
+tweet, we are not only interested in knowing whether the machine can
+make the same classification as the human (which we can measure with
+accuracy), but we are also interested in knowing whether the machine and
+the human make the same judgment for similar reasons.
+
 \hypertarget{lime}{%
 \subsubsection{LIME}\label{lime}}
 
@@ -326,6 +334,13 @@ of another. The final result of this effort is a novel metric which
 allows us to incorporate the LIME (Ribeiro, Singh, and Guestrin 2016)
 and ICA explainability output into a single score which represents the
 overall explainability as an aggregation of local explanations.
+
+Because our conception of explainability inherently relies on a
+comparison to human decision-making, our explainability metric takes an
+input which captures the rules our coders used to label our set of
+tweets. This input is in the form of a vocabulary list which comprises
+words that fall under the rules in Table 1 from Boukouvalas et al.
+(2020).
 
 Penalty: \[
 \frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j) - \mathbbm{1}_B(w_j)
@@ -459,6 +474,13 @@ See awesome Table\textasciitilde{}\ref{tab:table}.
 \addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
+\leavevmode\hypertarget{ref-boukouvalas_independent_2020}{}%
+Boukouvalas, Zois, Christine Mallinson, Evan Crothers, Nathalie
+Japkowicz, Aritran Piplai, Sudip Mittal, Anupam Joshi, and Tülay Adalı.
+2020. ``Independent Component Analysis for Trustworthy Cyberspace During
+High Impact Events: An Application to Covid-19.'' \emph{arXiv:2006.01284
+{[}Cs, Stat{]}}, June. \url{http://arxiv.org/abs/2006.01284}.
+
 \leavevmode\hypertarget{ref-honkela_wordicaemergence_2010}{}%
 Honkela, Timo, Aapo Hyvärinen, and Jaakko J. Väyrynen. 2010.
 ``WordICA---Emergence of Linguistic Representations for Words by
