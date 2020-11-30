@@ -2,7 +2,7 @@
 
 \ProcessOptions\relax
 
-% to create matrix decomposition diagram
+% to create matrix decomposition diagram (CM)
 \usepackage{stackengine}
 
 \stackMath
@@ -25,7 +25,7 @@
 }
 \parskip 1em
 
-% for indicator function
+% for indicator function (CM)
 \usepackage{bbm}
 
 % fonts
@@ -214,6 +214,7 @@
     \@thanks
     %\@notice
   \endgroup
+  \setcounter{footnote}{0}% numbered footnotes start at 1 (CM)
   \let\maketitle\relax
   \let\thanks\relax
 }
@@ -240,6 +241,7 @@
     \vskip 0.1in
     \@toptitlebar
     \centering
+    \let \footnote \thanks% allows title to have associated footnote (CM)
     {\LARGE\sc \@title\par}
     \@bottomtitlebar
     \textsc{A Preprint}\\

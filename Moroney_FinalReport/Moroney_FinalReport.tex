@@ -13,13 +13,12 @@
 \usepackage{lipsum}
 \usepackage{graphicx}
 
-\title{Automated Detection of Misinformation in Tweets about COVID-19}
+\title{Automated Detection of Misinformation in Tweets about COVID-19\footnote{This
+  work is an extension of Boukouvalas et al. (2020) produced under the
+  guidance of Dr.~Zois Boukouvalas and Dr.~Nathalie Japkowicz.}}
 
 \author{
     Caitlin Moroney
-    \thanks{Use footnote for providing further information about author (webpage,
-alternative address)---\emph{not} for acknowledging funding agencies.
-Optional.}
    \\
     Department of Mathematics and Statistics \\
     American University \\
@@ -51,6 +50,8 @@ Enter the text of your abstract here.
    \and
     misinformation
   }
+
+\newpage
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -113,7 +114,7 @@ methods.
 \end{itemize}
 
 After constructing the Bag-of-Words matrix, we employed topic modeling
-to reduce the dimensionality of the \(Nxp\) matrix.
+to reduce the dimensionality of the \(N\)x\(p\) matrix.
 
 \hypertarget{word-embeddings}{%
 \subsubsection{Word embeddings}\label{word-embeddings}}
@@ -306,7 +307,12 @@ decisions. In other words, when a human and the machine look at the same
 tweet, we are not only interested in knowing whether the machine can
 make the same classification as the human (which we can measure with
 accuracy), but we are also interested in knowing whether the machine and
-the human make the same judgment for similar reasons.
+the human make the same judgment for similar reasons. With our data,
+this can be posed as a question of whether the algorithm labels a tweet
+as unreliable due to evidence that intersects with the rules-based
+labeling performed by a human team that produced the tweet labels for
+our dataset. These guidelines are summarized in Table 1 from Boukouvalas
+et al. (2020).
 
 \hypertarget{lime}{%
 \subsubsection{LIME}\label{lime}}
@@ -340,9 +346,14 @@ comparison to human decision-making, our explainability metric takes an
 input which captures the rules our coders used to label our set of
 tweets. This input is in the form of a vocabulary list which comprises
 words that fall under the rules in Table 1 from Boukouvalas et al.
-(2020).
+(2020).\footnote{The vocabulary list we used can be found in the
+  Appendix \ref{sec:appendix}.} Our metric ``rewards'' the word
+embedding and algorithm pipeline for associating Table 1 words with the
+unreliable class. We produced two versions of the metric, one which
+penalizes the machine for associating Table 1 words with the reliable
+class, and one which does not include a penalty.
 
-Penalty: \[
+The formula which includes the penalty is as follows: \[
 \frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j) - \mathbbm{1}_B(w_j)
 \] where \(A\) is the set of words that the classifier associated with
 the correct class (e.g., tweet \(i\) is labeled as ``reliable,'' and the
@@ -352,11 +363,16 @@ associated with the wrong class according to the LIME output for tweet
 \(i\), there are \(T_i\) words in tweet \(i\), and there are \(N\)
 tweets.
 
-No Penalty: \[
+The following formula comprises the metric without no penalty for
+associating Table 1 words with the reliable class: \[
 \frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j)
 \] where \(A\) is the set of words that the classifier associated with
 the correct class according to the LIME output for tweet \(i\), there
-are \(T_i\) words in tweet \(i\), and there are \(N\) tweets.
+are \(T_i\) words in tweet \(i\), and there are \(N\) tweets. This
+version of the metric essentially computes the percentage of Table 1
+word occurrences that were correctly associated with the unreliable
+class per tweet and then computes an unweighted average over all of the
+tweets.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
@@ -393,6 +409,12 @@ are \(T_i\) words in tweet \(i\), and there are \(N\) tweets.
     Better ICA explainability tool?
   \item
     Better explainability metric?
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Weight by magnitude instead of binary yes/no weight?
+    \end{itemize}
   \item
     Other classifiers (e.g., neural nets)
   \item
@@ -469,6 +491,8 @@ See awesome Table\textasciitilde{}\ref{tab:table}.
   \label{tab:table}
 \end{table}
 
+\newpage
+
 \hypertarget{references}{%
 \section*{References}\label{references}}
 \addcontentsline{toc}{section}{References}
@@ -492,6 +516,14 @@ Ribeiro, Marco Tulio, Sameer Singh, and Carlos Guestrin. 2016. ``"Why
 Should I Trust You?": Explaining the Predictions of Any Classifier.''
 \emph{arXiv:1602.04938 {[}Cs, Stat{]}}, August.
 \url{http://arxiv.org/abs/1602.04938}.
+
+\newpage
+
+\hypertarget{appendix}{%
+\section*{Appendix}\label{appendix}}
+\addcontentsline{toc}{section}{Appendix}
+
+\label{sec:appendix}
 
 \bibliographystyle{unsrt}
 \bibliography{references.bib}

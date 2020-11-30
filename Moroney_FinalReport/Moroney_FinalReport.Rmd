@@ -1,8 +1,7 @@
 ---
-title: Automated Detection of Misinformation in Tweets about COVID-19
+title: Automated Detection of Misinformation in Tweets about COVID-19 ^[This work is an extension of @boukouvalas_independent_2020 produced under the guidance of Dr. Zois Boukouvalas and Dr. Nathalie Japkowicz.]
 authors:
   - name: Caitlin Moroney
-    thanks: Use footnote for providing further information about author (webpage, alternative address)---*not* for acknowledging funding agencies. Optional.
     department: Department of Mathematics and Statistics
     affiliation: American University
     location: Washington, DC 20016
@@ -20,6 +19,12 @@ output:
   rticles::arxiv_article:
     keep_tex: true
 ---
+
+```{r, echo = F}
+#library(bookdown)
+```
+
+\newpage
 
 # Introduction
 
@@ -39,7 +44,7 @@ In order to obtain features from the raw tweet text, we first employed standard 
     - Vectorization: raw counts, tf-idf, binary
     - PCA + ICA
 
-After constructing the Bag-of-Words matrix, we employed topic modeling to reduce the dimensionality of the $Nxp$ matrix.
+After constructing the Bag-of-Words matrix, we employed topic modeling to reduce the dimensionality of the $N$x$p$ matrix.
 
 ### Word embeddings
 
@@ -105,7 +110,7 @@ The number of components is also up for question - it seems that people use valu
 ## Evaluation
 In order to evaluate our experiments, including featurization methods and classification algorithms, we have identified three areas for comparison: performance, computational complexity, and explainability. To measure performance, we employ the standard suite of evaluation metrics, i.e., accuracy, F-score, precision, recall, and ROC-AUC. We report the macro-averaged versions of these scores. Computational complexity is easily captured by the amount of time taken for training and testing. Evaluating the explainability of one method versus another proves to be a more complicated task. For the experiments using word embeddings obtained from the pretrained BERT model, we use LIME [@ribeiro_why_2016] to obtain local explanations for tweet predictions. For the ICA word embeddings, we propose a new framework to obtain global and local explanations for tweet predictions which derive from the ICA matrix decomposition. In order to then compare overall explainability for one method versus another, we have devised a metric which captures information from the LIME and ICA local explanations and aggregates these values to produce a single number representing an explainability score. This allows us to compare two methods with respect to explainability in the same way that we might compare them in terms of accuracy or precision.
 
-Our goal with assessing explainability is to determine whether the machine learning pipeline is making what we would consider intuitive decisions. In other words, when a human and the machine look at the same tweet, we are not only interested in knowing whether the machine can make the same classification as the human (which we can measure with accuracy), but we are also interested in knowing whether the machine and the human make the same judgment for similar reasons.
+Our goal with assessing explainability is to determine whether the machine learning pipeline is making what we would consider intuitive decisions. In other words, when a human and the machine look at the same tweet, we are not only interested in knowing whether the machine can make the same classification as the human (which we can measure with accuracy), but we are also interested in knowing whether the machine and the human make the same judgment for similar reasons. With our data, this can be posed as a question of whether the algorithm labels a tweet as unreliable due to evidence that intersects with the rules-based labeling performed by a human team that produced the tweet labels for our dataset. These guidelines are summarized in Table 1 from @boukouvalas_independent_2020.
 
 ### LIME
 Explain LIME.
@@ -120,19 +125,19 @@ Explain ICA explainability.
 ### Explainability metric
 As mentioned above, our initial motivation in pursuing explainability was to provide an evaluation metric which would allow us to compare the overall explainability of one model and featurization method with that of another. The final result of this effort is a novel metric which allows us to incorporate the LIME [@ribeiro_why_2016] and ICA explainability output into a single score which represents the overall explainability as an aggregation of local explanations.
 
-Because our conception of explainability inherently relies on a comparison to human decision-making, our explainability metric takes an input which captures the rules our coders used to label our set of tweets. This input is in the form of a vocabulary list which comprises words that fall under the rules in Table 1 from @boukouvalas_independent_2020.
+Because our conception of explainability inherently relies on a comparison to human decision-making, our explainability metric takes an input which captures the rules our coders used to label our set of tweets. This input is in the form of a vocabulary list which comprises words that fall under the rules in Table 1 from @boukouvalas_independent_2020.^[The vocabulary list we used can be found in the Appendix \ref{sec:appendix}.] Our metric "rewards" the word embedding and algorithm pipeline for associating Table 1 words with the unreliable class. We produced two versions of the metric, one which penalizes the machine for associating Table 1 words with the reliable class, and one which does not include a penalty.
 
-Penalty:
+The formula which includes the penalty is as follows:
 $$
 \frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j) - \mathbbm{1}_B(w_j)
 $$
 where $A$ is the set of words that the classifier associated with the correct class (e.g., tweet $i$ is labeled as “reliable,” and the classifier classified the tweet as “reliable”) according to the LIME output for tweet $i$, $B$ is the set of words that the classifier associated with the wrong class according to the LIME output for tweet $i$, there are $T_i$ words in tweet $i$, and there are $N$ tweets.
 
-No Penalty:
+The following formula comprises the metric without no penalty for associating Table 1 words with the reliable class:
 $$
 \frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j)
 $$
-where $A$ is the set of words that the classifier associated with the correct class according to the LIME output for tweet $i$, there are $T_i$ words in tweet $i$, and there are $N$ tweets.
+where $A$ is the set of words that the classifier associated with the correct class according to the LIME output for tweet $i$, there are $T_i$ words in tweet $i$, and there are $N$ tweets. This version of the metric essentially computes the percentage of Table 1 word occurrences that were correctly associated with the unreliable class per tweet and then computes an unweighted average over all of the tweets.
 
 # Results
 \label{sec:results}
@@ -150,6 +155,7 @@ Report evaluation metrics for...
     - Multiple ICA runs + take most representative of those
     - Better ICA explainability tool?
     - Better explainability metric?
+        - Weight by magnitude instead of binary yes/no weight?
     - Other classifiers (e.g., neural nets)
     - Incorporate other features:
         - Part-of-speech tag counts
@@ -207,5 +213,13 @@ See awesome Table~\ref{tab:table}.
   \label{tab:table}
 \end{table}
 
-# References
+\newpage
 
+# References {-}
+
+<div id="refs"></div>
+
+\newpage
+
+# Appendix {-}
+\label{sec:appendix}
