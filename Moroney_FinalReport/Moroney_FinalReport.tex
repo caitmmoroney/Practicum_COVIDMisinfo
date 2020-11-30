@@ -58,6 +58,46 @@ Enter the text of your abstract here.
 
 Insert introduction text here.
 
+\begin{itemize}
+\tightlist
+\item
+  Misinformation is a big problem, especially on Twitter \& social media
+\item
+  Misinformation: unreliable vs reliable tweets
+\item
+  Dataset: 560 tweets manually labeled as unreliable or not unreliable
+  (refer to this class as reliable)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    originally collected sample of 282,201 Twitter users from Canada,
+    balanced for race, gender, and age by using Conditional Independence
+    Coupling (CIC)
+  \item
+    tweets were posted between January 1, 2020 and March 13, 2020
+  \item
+    randomly undersampled 1,600 tweets with goal of creating balanced
+    reliable/unreliable dataset
+  \item
+    two experts reviewed tweets against set of rules (link to table in
+    appendix); obtained 280 unreliable tweets
+  \item
+    randomly undersampled the reliable class in order to have perfectly
+    balanced dataset of 560 tweets total
+  \end{itemize}
+\item
+  Topic modeling
+\item
+  Word embeddings
+\item
+  Latent variable methods: PCA \& ICA
+\item
+  Binary \& one-class classification using SVM
+\item
+  Implementation done in Python (footnote linking to code page)
+\end{itemize}
+
 The rest of the paper is organized as follows: Section \ref{sec:methods}
 discusses our methodology; Section \ref{sec:results} presents the
 results of our experiments; Section \ref{sec:discuss} discusses our
@@ -99,40 +139,62 @@ methods.
 \hypertarget{bag-of-words}{%
 \subsubsection{Bag-of-Words}\label{bag-of-words}}
 
-\begin{itemize}
-\tightlist
-\item
-  Bag-of-Words + topic modeling
+A standard NLP featurization method is the Bag-of-Words model. This
+method can be described as quantifying textual data by representing each
+document in a dataset with a set of features which derive from the set
+of words used across all of the documents (Salton and McGill 1983). In
+other words, we create a dictionary from the unique terms used in a set
+of documents, and each word in the dictionary is associated with a
+feature in a matrix of documents (rows) by terms (columns). There are
+generally two methods for obtaining cell values for the document-term
+matrix, \(\mathbf{X}\): binary indexing and weighted indexing (Salton
+and McGill 1983).
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Vectorization: raw counts, tf-idf, binary
-  \item
-    PCA + ICA
-  \end{itemize}
-\end{itemize}
+Binary indexing consists of scanning each document for the presence of
+each word in the dictionary. For the \(i^{th}\) document, if term \(j\)
+appears at least once in the document, cell \(\mathbf{X}_{ij} = 1\);
+otherwise, \(\mathbf{X}_{ij} = 0\).
 
-After constructing the Bag-of-Words matrix, we employed topic modeling
-to reduce the dimensionality of the \(N\)x\(p\) matrix.
+Weighted indexing, on the other hand, accounts for the frequency of
+terms (Salton and McGill 1983). The most basic implementation of
+weighted indexing is count vectorization: for the \(i^{th}\) document,
+\(\mathbf{X}_{ij}\) is equal to the number of times term \(j\) appears
+in the document. The corresponding formula is as follows:
+\[\mathbf{X}_{ij} = \sum_{l=1}^{T_i}{\mathbbm{1}_{w_l = w_j}}\] where
+\(w_j\) is the term corresponding to column \(j\) in the document-term
+matrix, \(w_l\) is the \(l^{th}\) word in tweet \(i\), and there are
+\(T_i\) words in tweet \(i\). We refer to this method as the term
+frequency, or TF, method. Another common weighting scheme, term
+frequency-inverse document frequency (often referred to as TF-IDF),
+consists of a transformation on the TF Bag-of-Words matrix. We divide by
+the document frequency, which is the total number of documents in the
+dataset in which term \(j\) appears (Salton and McGill 1983). This can
+be represented as the following formula:
+\[\mathbf{X}_{ij} = \frac {\sum_{l=1}^{T_i}{\mathbbm{1}_{w_l = w_j}}} {\sum_{k=1}^{N}{\mathbbm{1}_{w_j \in C_k}}}\]
+where the only new term, \(C_k\), is the set of words that appear in
+document \(k\).
+
+After constructing the Bag-of-Words matrix, we employ topic modeling to
+reduce the dimensionality of the \(N\)x\(p\) matrix. This process is
+discussed in more detail below (see Section \ref{sec:LVpipe}).
 
 \hypertarget{word-embeddings}{%
 \subsubsection{Word embeddings}\label{word-embeddings}}
 
-To create word embeddings, we used the word-context co-occurrence matrix
+To create word embeddings, we use the word-context co-occurrence matrix
 which, unlike the Bag-of-Words method, is able to incorporate
-information about context from the raw text data. We trained the
+information about context from the raw text data. We train the
 embeddings on the full set of 560 tweets. With the Bag-of-Words methods,
 we are able to encode information about words' presence in a given
 document; the co-occurrence approach improves upon this by allowing us
 to look at word usage with respect to the presence of other words. We
-constructed a word-context co-occurrence matrix using the entire
+construct a word-context co-occurrence matrix using the entire
 vocabulary for both target terms and context terms. In other words, the
-matrix was symmetric. We incorporated a number of hyperparameters
-related to the construction and subsequent transformation of this
-matrix, including context window size, the use of raw counts or
-variations on the Pointwise Mutual Information (PMI), and Laplace
-smoothing. We also included ``\textless START\textgreater{}'' and
+matrix is symmetric. We incorporate a number of hyperparameters related
+to the construction and subsequent transformation of this matrix,
+including context window size, the use of raw counts or variations on
+the Pointwise Mutual Information (PMI), and Laplace smoothing. We also
+include ``\textless START\textgreater{}'' and
 ``\textless END\textgreater{}'' tokens at the beginning and end of each
 tweet.
 
@@ -159,11 +221,18 @@ whereas smaller windows capture more syntactic representations.
   Use of start \& end tokens
 \end{itemize}
 
-Latent variable methods were subsequently applied to the word embeddings
-in order to reduce the dimensionality.
+Latent variable methods are subsequently applied to the word embeddings
+in order to reduce the dimensionality. For more information on this
+process, please see Section \ref{sec:LVpipe}.
 
-Finally, we averaged over the word embeddings for the words in each
-tweet to obtain a single vector representation for each tweet.
+Finally, we average over the word embeddings for the words in each tweet
+to obtain a single vector representation for each tweet:
+\[\mathbf{v}_i=\frac {1} {T_i} \sum_{j=1}^{T_i}{\mathbf{e}_j}\] where
+\(\mathbf{v}_i\) is the vector representation for tweet \(i\),
+\(\mathbf{e}_j\) is the embedding for word \(j\) in tweet \(i\), and
+there are \(T_i\) words in tweet \(i\). Note that in our experiments
+\(\mathbf{e}_j\) (and, therefore, \(\mathbf{v}_i\)) is of size
+\(250\)x\(1\).
 
 Overall, it seemed that larger context windows prevailed - a window size
 of 15 +/- performed the best (I tried window sizes of 1, 2, 4, 6, 10,
@@ -198,9 +267,9 @@ loop).} NOTE: These should be replaced with the correct numbers.
 \subsection{Latent variable methods}\label{latent-variable-methods}}
 
 In order to reduce the dimensionality of the data matrix \(\mathbf{X}\),
-we employed latent variable methods. Specifically, we followed the
+we employ latent variable methods. Specifically, we follow the
 methodology presented in Honkela, Hyvärinen, and Väyrynen (2010): we
-applied Principal Component Analysis (PCA) followed by Independent
+apply Principal Component Analysis (PCA) followed by Independent
 Component Analysis (ICA) to both the Bag-of-Words matrix and the
 word-context co-occurrence matrix.
 
@@ -256,14 +325,14 @@ column is a latent variable (or independent component).
 \subsubsection{Latent variables
 pipeline}\label{latent-variables-pipeline}}
 
-The pipeline involves performing SVD on the initial data matrix,
-\(\mathbf{X}\), such that we can obtain the \(\mathbf{U}\) matrix which
-contains the SVD feature vectors. This matrix is used as the input for
-ICA, so that we have \(\mathbf{U = AS}\). Then, \(\mathbf{S}\) is the
-whitened mixing matrix, and \(\mathbf{A}\) contains the ICA features.
-This process is represented visually in Figure \ref{fig:matdec}. We use
-the estimated \(\mathbf{\hat{A}}\) matrix as the input to our
-classification models.
+\label{sec:LVpipe} The pipeline involves performing SVD on the initial
+data matrix, \(\mathbf{X}\), such that we can obtain the \(\mathbf{U}\)
+matrix which contains the SVD feature vectors. This matrix is used as
+the input for ICA, so that we have \(\mathbf{U = AS}\). Then,
+\(\mathbf{S}\) is the whitened mixing matrix, and \(\mathbf{A}\)
+contains the ICA features. This process is represented visually in
+Figure \ref{fig:matdec}. We use the estimated \(\mathbf{\hat{A}}\)
+matrix as the input to our classification models.
 
 The only difference between the topic modeling approach and the word
 embedding approach is the structure of the original data matrix
@@ -395,10 +464,10 @@ unreliable class. We produced two versions of the metric, one which
 penalizes the machine for associating Table 1 words with the reliable
 class, and one which does not include a penalty.
 
-The formula which includes the penalty is as follows: \[
-\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j) - \mathbbm{1}_B(w_j)
-\] where \(A\) is the set of words that the classifier associated with
-the correct class (e.g., tweet \(i\) is labeled as ``reliable,'' and the
+The formula which includes the penalty is as follows:
+\[\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j) - \mathbbm{1}_B(w_j)\]
+where \(A\) is the set of words that the classifier associated with the
+correct class (e.g., tweet \(i\) is labeled as ``reliable,'' and the
 classifier classified the tweet as ``reliable'') according to the LIME
 output for tweet \(i\), \(B\) is the set of words that the classifier
 associated with the wrong class according to the LIME output for tweet
@@ -406,15 +475,14 @@ associated with the wrong class according to the LIME output for tweet
 tweets.
 
 The following formula comprises the metric without no penalty for
-associating Table 1 words with the reliable class: \[
-\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j)
-\] where \(A\) is the set of words that the classifier associated with
-the correct class according to the LIME output for tweet \(i\), there
-are \(T_i\) words in tweet \(i\), and there are \(N\) tweets. This
-version of the metric essentially computes the percentage of Table 1
-word occurrences that were correctly associated with the unreliable
-class per tweet and then computes an unweighted average over all of the
-tweets.
+associating Table 1 words with the reliable class:
+\[\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j)\]
+where \(A\) is the set of words that the classifier associated with the
+correct class according to the LIME output for tweet \(i\), there are
+\(T_i\) words in tweet \(i\), and there are \(N\) tweets. This version
+of the metric essentially computes the percentage of Table 1 word
+occurrences that were correctly associated with the unreliable class per
+tweet and then computes an unweighted average over all of the tweets.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
@@ -517,6 +585,11 @@ Ribeiro, Marco Tulio, Sameer Singh, and Carlos Guestrin. 2016. ``"Why
 Should I Trust You?": Explaining the Predictions of Any Classifier.''
 \emph{arXiv:1602.04938 {[}Cs, Stat{]}}, August.
 \url{http://arxiv.org/abs/1602.04938}.
+
+\leavevmode\hypertarget{ref-salton_introduction_1983}{}%
+Salton, Gerard, and Michael J. McGill. 1983. \emph{Introduction to
+Modern Information Retrieval}. McGraw-Hill Computer Science Series. New
+York: McGraw-Hill.
 
 \newpage
 
