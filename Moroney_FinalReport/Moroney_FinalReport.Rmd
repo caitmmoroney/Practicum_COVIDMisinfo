@@ -30,6 +30,20 @@ output:
 
 Insert introduction text here.
 
+- Misinformation is a big problem, especially on Twitter & social media
+- Misinformation: unreliable vs reliable tweets
+- Dataset: 560 tweets manually labeled as unreliable or not unreliable (refer to this class as reliable)
+    - originally collected sample of 282,201 Twitter users from Canada, balanced for race, gender, and age by using Conditional Independence Coupling (CIC)
+    - tweets were posted between January 1, 2020 and March 13, 2020
+    - randomly undersampled 1,600 tweets with goal of creating balanced reliable/unreliable dataset
+    - two experts reviewed tweets against set of rules (link to table in appendix); obtained 280 unreliable tweets
+    - randomly undersampled the reliable class in order to have perfectly balanced dataset of 560 tweets total
+- Topic modeling
+- Word embeddings
+- Latent variable methods: PCA & ICA
+- Binary & one-class classification using SVM
+- Implementation done in Python (footnote linking to code page)
+
 The rest of the paper is organized as follows: Section \ref{sec:methods} discusses our methodology; Section \ref{sec:results} presents the results of our experiments; Section \ref{sec:discuss} discusses our results and plans for future work.
 
 # Methodology
