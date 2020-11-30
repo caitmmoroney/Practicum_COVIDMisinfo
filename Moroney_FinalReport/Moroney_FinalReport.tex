@@ -312,7 +312,8 @@ this can be posed as a question of whether the algorithm labels a tweet
 as unreliable due to evidence that intersects with the rules-based
 labeling performed by a human team that produced the tweet labels for
 our dataset. These guidelines are summarized in Table 1 from Boukouvalas
-et al. (2020).
+et al. (2020). This table has been reproduced in the appendix (see Table
+\ref{tab:table1words}).
 
 \hypertarget{lime}{%
 \subsubsection{LIME}\label{lime}}
@@ -524,6 +525,51 @@ Should I Trust You?": Explaining the Predictions of Any Classifier.''
 \addcontentsline{toc}{section}{Appendix}
 
 \label{sec:appendix}
+
+\begin{table}[htp]
+ \caption{Insert Caption}
+  \centering
+  \begin{tabular}{p{6cm}|p{9cm}}
+    \hline
+    \textbf{Linguistic Feature} & \textbf{Example from Dataset} \\ [0.5 ex]
+    \hline\hline
+    Hyperbolic, intensified, superlative, or emphatic language & e.g., ‘blame’, ‘accuse’, ‘refuse’, ‘catastrophe’, ‘chaos’, ‘evil’ \\
+    \hline
+    Greater use of punctuation and/or special characters & e.g., e.g., ‘YA THINK!!?!!?!’, ‘Can we PLEASE stop spreading the lie that Coronavirus is super super super contagious? It’s not. It has a contagious rating of TWO’ \\
+    \hline
+    Strongly emotional or subjective language & e.g., ‘fight’, ‘danger’, ‘hysteria’, ‘panic’, ‘paranoia’, ‘laugh’, ‘stupidity’ or other words indicating fear, surprise, alarm, anger, and so forth \\
+    \hline
+    Greater use of verbs of perception and/or opinion & e.g., ‘hear’, ‘see’, ‘feel’, ‘suppose’, ‘perceive’, ‘look’, ‘appear’, ‘suggest’, ‘believe’, ‘pretend’ \\
+    \hline
+    Language related to death and/or war & e.g., ‘martial law’, ‘kill’, ‘die’, ‘weapon’, ‘weaponizing’ \\
+    \hline
+    Greater use of proper nouns & e.g., ‘USSR lied about Chernobyl. Japan lied about Fukushima. China has lied about Coronavirus. Countries lie. Ego, global’ \\
+    \hline
+    Shorter and/or simpler language & e.g., ‘\#Iran just killed 57 of our citizens. The \#coronavirus is spreading for Canadians Our economy needs support.’ \\
+    \hline
+    Hate speech and/or use of racist or stereotypical language & e.g., ‘foreigners’, ‘Wuhan virus’, reference to Chinese people eating cats and dogs \\
+    \hline
+    First and second person pronouns & e.g., ‘I’, ‘me’, ‘my’, ‘mine’, ‘you’, ‘your’, ‘we’, ‘our’ \\
+    \hline
+    Direct falsity claim and/or a truth claim & e.g., ‘propaganda’, ‘fake news’, ‘conspiracy’, ‘claim’, ‘misleading’, ‘hoax’ \\
+    \hline
+    Direct health claim & e.g., ‘cure’, ‘breakthrough’, posting infection statistics \\
+    \hline
+    Repetitive words or phrases & e.g., ‘Communist China is lying about true extent of Coronavirus outbreak - If Communist China doesn’t come clean’ \\
+    \hline
+    Mild or strong expletives, curses, slurs, or other offensive terms & e.g., ‘bitch’, ‘WTF’, ‘dogbreath’, ‘Zombie homeless junkies’, ‘hell’, ‘screwed’ \\
+    \hline
+    Language related to religion & e.g., ‘secular’, ‘Bible’ \\
+     \hline
+    Politically biased terms & e.g., ‘MAGA’, ‘MAGAt’, ‘genetic engineer Hillary’, ‘Chinese regime’, ‘deep state’, ‘Free Market Fundamentalists’, ‘Communist China’, ‘Nazi’ \\
+    \hline
+    Language related to financial or economic impact, money/costs, or the stock market & e.g., ‘THE STOCK MARKET ISN’T REAL THE ECONOMY ISN’T REAL THE CORONAVIRUS ISN’T REAL FAKE NEWS REEEEEEEEEEEEEEEEE’ \\
+    \hline
+    Language related to the Trump presidential election, campaign, impeachment, base, and rallies & e.g., ‘What you are watching with the CoronaVirus has been planned and orchestrated. We are 8 months from the next Presidential elections’ \\
+    \hline
+  \end{tabular}
+  \label{tab:table1words}
+\end{table}
 
 \bibliographystyle{unsrt}
 \bibliography{references.bib}
