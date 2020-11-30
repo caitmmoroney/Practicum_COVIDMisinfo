@@ -77,7 +77,7 @@ In order to perform PCA, we rescale the data matrix and then apply Singular Valu
 $$\mathbf{X = U \Sigma V}^T$$
 where $\mathbf{\Sigma}$ is a diagonal matrix containing the singular values of $\mathbf{X}$, $\mathbf{U}$ is BLAH, and $\mathbf{V}^T$ is BLAHBLAH.
 
-To achieve PCA, we can use truncated SVD. In essence, we perform SVD and keep only the columns of $\mathbf{U}$ and $\mathbf{V}^T$ that correspond to the largest $k$ singular values in the diagonal matrix $\mathbf{\Sigma}$, where $k$ is the desired order for the approximation of our initial data matrix. Therefore, if $k$ is less than $m$, we have achieved dimensionality reduction.
+To achieve PCA, we can use truncated SVD. In essence, we perform SVD and keep only the columns of $\mathbf{U}$ and $\mathbf{V}^T$ that correspond to the largest $k$ singular values in the diagonal matrix $\mathbf{\Sigma}$, where $k$ is the desired order for the approximation of our initial data matrix. Therefore, if $k$ is less than $m$, we have achieved dimensionality reduction. In our experiments, we use $k = 250$.
 
 ### Independent Component Analysis
 ICA is one method to address the blind source separation problem (also referred to as the blind signal separation problem), which can be represented in matrix form as follows:
@@ -91,9 +91,11 @@ In other words, ICA allows us to extract independent signals from the original d
 ### Latent variables pipeline
 The pipeline involves performing SVD on the initial data matrix, $\mathbf{X}$, such that we can obtain the $\mathbf{U}$ matrix which contains the SVD feature vectors. This matrix is used as the input for ICA, so that we have $\mathbf{U = AS}$. Then, $\mathbf{S}$ is the whitened mixing matrix, and $\mathbf{A}$ contains the ICA features. This process is represented visually in Figure \ref{fig:matdec}. We use the estimated $\mathbf{\hat{A}}$ matrix as the input to our classification models.
 
-The only difference between the topic modeling approach and the word embedding approach is the structure of the original data matrix $\mathbf{X}$ obtained from the chosen NLP featurization method. In one case, we obtain vector representations for documents; in the other, we obtain vector representations for terms. For topic modeling, we start with a documents by terms matrix and end up with ICA features which are linear combinations of SVD features which are in turn linear combinations of terms (hence, topics). When we start with the word-context co-occurrence matrix, we obtain word embeddings, which are vectors of ICA features which are linear combinations of SVD features which are in turn linear combinations of context terms (again, we can think of these as topics).
+The only difference between the topic modeling approach and the word embedding approach is the structure of the original data matrix $\mathbf{X}$ obtained from the chosen NLP featurization method. In one case, we obtain vector representations for documents; in the other, we obtain vector representations for terms.
 
-The number of components is also up for question - it seems that people use values anywhere from 50 to 1,000.
+For topic modeling, we start with a documents by terms matrix and perform dimensionality reduction via truncated SVD in order to obtain $k$ latent variables. These SVD features are linear combinations of the original columns of the Bag-of-Words matrix, which are terms. In other words, each latent variable is a topic, comprised of a linear combination of words which can be ranked by their weights from the estimated $\mathbf{\hat{V}}$ matrix. We subsequently apply ICA to the estimated $\mathbf{\hat{U}}$ matrix, containing the SVD features, in order to obtain the $k$ independent components. The resulting ICA features are linear combinations of SVD features.
+
+When we start with the word-context co-occurrence matrix, we obtain word embeddings comprised of latent variables after first performing truncated SVD. These SVD features are linear combinations of the context words taken from the original co-occurrence matrix. However, we go a step further in order to obtain statistically independent latent variables by applying ICA to the estimated $\mathbf{\hat{U}}$ matrix. This allows us to obtain ICA word embeddings from the $\mathbf{\hat{A}}$ matrix, whose columns are linear combinations of the SVD features. The estimated $\mathbf{\hat{S}}$ matrix allows us to access the weights for these linear combinations.
 
 \begin{figure}
   \centering
@@ -150,7 +152,11 @@ where $A$ is the set of words that the classifier associated with the correct cl
 Report evaluation metrics for...
 
 - One-class SVM
+    - Performance
+    - Explainability
 - Binary SVM
+    - Performance
+    - Explainability
 
 # Discussion
 \label{sec:discuss}
@@ -169,56 +175,6 @@ Report evaluation metrics for...
         - Use of all-caps
         - Sentiment analysis
 
-\paragraph{Paragraph}
-Misc. text.
-
-# Examples of citations, figures, tables, references
-\label{sec:others}
-
-The documentation for \verb+natbib+ may be found at
-\begin{center}
-  \url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-\end{center}
-Of note is the command \verb+\citet+, which produces citations
-appropriate for use in inline text.  For example,
-
-\begin{verbatim}
-   \citet{hasselmo} investigated\dots
-\end{verbatim}
-
-produces
-
-\begin{quote}
-  Hasselmo, et al.\ (1995) investigated\dots
-\end{quote}
-
-\begin{center}
-  \url{https://www.ctan.org/pkg/booktabs}
-\end{center}
-
-## Tables
-
-Misc. text.
-
-See awesome Table~\ref{tab:table}.
-
-\begin{table}
- \caption{Sample table title}
-  \centering
-  \begin{tabular}{lll}
-    \toprule
-    \multicolumn{2}{c}{Part}                   \\
-    \cmidrule(r){1-2}
-    Name     & Description     & Size ($\mu$m) \\
-    \midrule
-    Dendrite & Input terminal  & $\sim$100     \\
-    Axon     & Output terminal & $\sim$10      \\
-    Soma     & Cell body       & up to $10^6$  \\
-    \bottomrule
-  \end{tabular}
-  \label{tab:table}
-\end{table}
-
 \newpage
 
 # References {-}
@@ -231,7 +187,7 @@ See awesome Table~\ref{tab:table}.
 \label{sec:appendix}
 
 \begin{table}[htp]
- \caption{Insert Caption}
+ \caption{Misinformation rules from Boukouvalas et al. (2020)}
   \centering
   \begin{tabular}{p{6cm}|p{9cm}}
     \hline
