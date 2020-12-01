@@ -476,7 +476,7 @@ linear combinations.
   \newline
   \matbox{5}{3}{n}{k}{U} = 
   \matbox{5}{3}{n}{p}{A} \raiserows{1}{\matbox{3}{3}{p}{k}{S}}
-  \caption{Truncated Singular Value Decomposition followed by Independent Componenet Analysis.}
+  \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
   \label{fig:matdec}
 \end{figure}
 
@@ -602,9 +602,11 @@ set-up.
 \subsection{Performance}\label{performance}}
 
 To assess performance, we report the macro-averaged ROC-AUC, accuracy,
-F\textsubscript{1}-score, precision, and recall values. Overall, the
-binary classification experiment had much greater success than any of
-the three one-class classification models.
+F\textsubscript{1}-score, precision, and recall values.\footnote{For
+  non-macro-averaged binary classification results, see Table
+  \ref{tab:svm_nomacro}} Overall, the binary classification experiment
+had much greater success than any of the three one-class classification
+models.
 
 \hypertarget{one-class-classification}{%
 \subsubsection{One-class
@@ -724,43 +726,38 @@ experiment.
 \tightlist
 \item
   Interpret results
-\item
-  Future work
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Different ICA algorithm (not FastICA)
-  \item
-    Multiple ICA runs + take most representative of those
-  \item
-    Better ICA explainability tool?
-  \item
-    Better explainability metric?
-
-    \begin{itemize}
-    \tightlist
-    \item
-      Weight by magnitude instead of binary yes/no weight?
-    \end{itemize}
-  \item
-    Other classifiers (e.g., neural nets)
-  \item
-    Incorporate other features:
-
-    \begin{itemize}
-    \tightlist
-    \item
-      Part-of-speech tag counts
-    \item
-      Punctuation counts
-    \item
-      Use of all-caps
-    \item
-      Sentiment analysis
-    \end{itemize}
-  \end{itemize}
 \end{itemize}
+
+Future work on this subject can pursue several directions. An initial
+improvement concerns the ICA implementation: FastICA is only one of
+several ICA algorithms, and it may be worth investigating the use of
+other ICA algorithms to see whether a different algorithm (for the same
+model) produces different results. In a similar vein, we might consider
+conducting multiple ICA runs on the same word-context matrix and then
+taking the most representative vector representations from those runs.
+In our current study, we run ICA one time and use those vector
+representations for the word embeddings.
+
+Two of the more straightforward additions would be to compare the
+performance of other binary classification models and to compare word
+embeddings created with different latent variable methods. Specifically,
+it would be interesting to compare binary SVM with a neural net model.
+For latent variable methods, instead of SVD followed by ICA we could
+perform non-negative matrix factorization (NMF), dictionary learning
+(DL), latent semantic analysis (SVD alone), or latent Dirichlet
+allocation (LDA).
+
+Another extension of this work could incorporate other linguistic
+features from the dataset. Whereas we have focused on the vocabulary, it
+would be of interest to see whether part-of-speech tag counts,
+punctuation counts, the use of all-capitalized text, or sentiment
+analysis might be discriminative features in the task at hand.
+
+More involved work could consist of improvements upon our ICA
+explainability framework or our explainability metric. A starting point
+for an extension of the explainability metric could be the incorporation
+of the feature (word) weight magnitudes instead of a binary weight based
+on sign (which signifies class association) alone.
 
 \newpage
 
@@ -829,9 +826,6 @@ York: McGraw-Hill.
 
 \label{sec:appendix}
 
-\hypertarget{table-1-words}{%
-\subsection{Table 1 words}\label{table-1-words}}
-
 \begin{table}[htp]
  \caption{Misinformation rules from Boukouvalas et al. (2020)}
   \centering
@@ -877,14 +871,8 @@ York: McGraw-Hill.
   \label{tab:table1words}
 \end{table}
 
-\hypertarget{word-embedding-results}{%
-\subsection{Word embedding results}\label{word-embedding-results}}
-
-\hypertarget{dimensions}{%
-\subsubsection{150 dimensions}\label{dimensions}}
-
 \begin{table}[htp]
- \caption{Binary clf results using word embeddings dim 150}
+ \caption{Binary SVM results using word embeddings dim 150}
   \centering
   \begin{tabular}{|l|c|c|c|c|c|}
     \hline
@@ -934,11 +922,8 @@ York: McGraw-Hill.
   \label{tab:wemb150}
 \end{table}
 
-\hypertarget{dimensions-1}{%
-\subsubsection{500 dimensions}\label{dimensions-1}}
-
 \begin{table}[htp]
- \caption{Binary clf results using word embeddings dim 500}
+ \caption{Binary SVM results using word embeddings dim 500}
   \centering
   \begin{tabular}{|l|c|c|c|c|c|}
     \hline
@@ -988,15 +973,8 @@ York: McGraw-Hill.
   \label{tab:wemb500}
 \end{table}
 
-\hypertarget{choosing-dimension-of-word-embeddings}{%
-\subsubsection{Choosing dimension of word
-embeddings}\label{choosing-dimension-of-word-embeddings}}
-
-All word-context matrices were formed using unshifted
-PMI\textsubscript{0} with no Laplace smoothing.
-
 \begin{table}[htp]
- \caption{Binary clf results using word embeddings with varying dimensions}
+ \caption{Binary SVM results (not macro-averaged)}
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
@@ -1015,7 +993,7 @@ PMI\textsubscript{0} with no Laplace smoothing.
     500 & 0.908 & 0.789 & 0.810 & 0.746 & 0.896 \\
     \hline
   \end{tabular}
-  \label{tab:wedim}
+  \label{tab:svm_nomacro}
 \end{table}
 
 \bibliographystyle{unsrt}
