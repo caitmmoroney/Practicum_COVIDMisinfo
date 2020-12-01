@@ -131,8 +131,14 @@ variables, classification, and evaluation of explainability.
 \subsection{NLP featurization}\label{nlp-featurization}}
 
 In order to obtain features from the raw tweet text, we first employed
-standard preprocessing, to include removing stop words and punctuation
-as well as lemmatizing words. The two approaches we pursued involved (1)
+standard preprocessing, to include removing stop words and some
+punctuation as well as lemmatizing words. Specifically, we removed
+special characters which were not punctuation (e.g., parentheses,
+question marks, exclamation points, periods, commas, hyphens, colons,
+and semicolons) or alphanumeric characters (i.e., letters or numbers),
+converted all text to lowercase, removed stop words, and lemmatized
+words using NLTK's WordNetLemmatizer aided by NLTK's part-of-speech
+tagger. After preprocessing, the two approaches we pursued involved (1)
 Bag-of-Words and (2) word embeddings, each followed by latent variable
 methods.
 
@@ -181,8 +187,13 @@ discussed in more detail below (see Section \ref{sec:LVpipe}).
 \hypertarget{word-embeddings}{%
 \subsubsection{Word embeddings}\label{word-embeddings}}
 
-``You shall know a word by the company it keeps!'' (Firth 1957). To
-create word embeddings, we obtain sparse vector representations which
+\begin{quote}
+``You shall know a word by the company it keeps!''
+
+--- (Firth 1957)
+\end{quote}
+
+To create word embeddings, we obtain sparse vector representations which
 are subsequently transformed into dense vector representations via
 matrix decomposition. To first construct sparse vector representations,
 we use the word-word co-occurrence matrix (also known as the
@@ -281,7 +292,7 @@ possible word-context pairs will not be observed in the corpus, which
 results in \(PMI(w_i, w_j) = \log0 = - \infty\). One solution to this
 issue is to substitute 0 for \(- \infty\) in these cases such that the
 PMI value for unobserved word-context pair \(w_i, w_j\) is equal to 0.
-We will refer to this method as \(\mathrm{PMI_0}\). This, however,
+We will refer to this method as PMI\textsubscript{0}. This, however,
 results in an inconsistency in the word-context matrix because
 ``observed but `bad' (uncorrelated) word-context pairs have a negative
 matrix entry, while unobserved (hence, worse) ones have 0 in their
@@ -290,10 +301,10 @@ alternative to PMI is the positive Pointwise Mutual Information (PPMI),
 which is defined as follows: \[PPMI(w_i, w_j) = \max(PMI(w_i, w_j), 0)\]
 such that the word-context matrix is non-negative. Another method to
 address the issue of unobserved word-context pairs is discussed below.
-Note that for our experiments we found \(\mathrm{PMI_0}\) to work
+Note that for our experiments we found PMI\textsubscript{0} to work
 slightly better than or comparable to PPMI, while both mutual
 information metrics surpassed the raw counts approach. Therefore, our
-final ICA word embeddings were formed using \(\mathrm{PMI_0}\).
+final ICA word embeddings were formed using PMI\textsubscript{0}.
 
 \hypertarget{laplace-smoothing}{%
 \paragraph{Laplace smoothing}\label{laplace-smoothing}}
@@ -319,12 +330,20 @@ on their investigation of the Skip-Gram with Negative Sampling (SGNS)
 model from Mikolov et al. (2013).
 \[SPPMI_k(w_i, w_j) = \max(PMI(w_i, w_j) - \log k, 0)\] where \(k\) is a
 user-specified parameter which incorporates negative sampling (Levy and
-Goldberg 2014). We compared PPMI, SPPMI, \(\mathrm{PMI_0}\), and
-\(\mathrm{SPMI_0}\). We found that unshifted \(\mathrm{PMI_0}\) produced
-the best embeddings from our set of 560 tweets.
+Goldberg 2014). We compared PPMI, SPPMI, PMI\textsubscript{0}, and
+SPMI\textsubscript{0}. We found that unshifted PMI\textsubscript{0}
+produced the best embeddings from our set of 560 tweets.
 
 \hypertarget{use-of-start-end-tokens}{%
 \paragraph{Use of start \& end tokens}\label{use-of-start-end-tokens}}
+
+We add ``\textless START\textgreater{}'' and
+``\textless END\textgreater{}'' tokens to the beginning and end of each
+tweet in order to capture information about which tokens (or words)
+collocate with the beginning or end of a tweet. For example, we might
+expect the ``\#'' token to appear more often with the
+``\textless END\textgreater{}'' token than other vocabulary words
+because hashtags are often included at the end of a tweet.
 
 Overall, it seemed that larger context windows prevailed - a window size
 of 15 +/- performed the best (I tried window sizes of 1, 2, 4, 6, 10,
@@ -335,13 +354,7 @@ decreased performance across all metrics (accuracy, precision, recall,
 ROC AUC, and F1 score). Interestingly, PMI often outperformed not only
 raw frequencies but also PPMI (positive PMI). However, with other
 optimal hyperparameters held constant, there was virtually no difference
-in performance between PMI and PPMI. Optimal text cleaning included
-removing special characters which were not punctuation (parentheses,
-question marks, exclamation points, periods, commas, hyphens, colons,
-and semicolons) or alphanumeric characters (letters or numbers),
-converting all text to lowercase, removing stop words, and lemmatizing
-words (using NLTK's WordNetLemmatizer aided by NLTK's part-of-speech
-tagger).
+in performance between PMI and PPMI.
 
 \textbf{The best results included ROC AUC of 0.94, accuracy of 0.89, F1
 score of 0.90, precision of 0.86, and recall of 0.94. These scores are
@@ -732,6 +745,9 @@ York: McGraw-Hill.
 
 \label{sec:appendix}
 
+\hypertarget{table-1-words}{%
+\subsection{Table 1 words}\label{table-1-words}}
+
 \begin{table}[htp]
  \caption{Misinformation rules from Boukouvalas et al. (2020)}
   \centering
@@ -775,6 +791,147 @@ York: McGraw-Hill.
     \hline
   \end{tabular}
   \label{tab:table1words}
+\end{table}
+
+\hypertarget{word-embedding-results}{%
+\subsection{Word embedding results}\label{word-embedding-results}}
+
+\hypertarget{dimensions}{%
+\subsubsection{150 dimensions}\label{dimensions}}
+
+\begin{table}[htp]
+ \caption{Binary clf results using word embeddings dim 150}
+  \centering
+  \begin{tabular}{|l|c|c|c|c|c|}
+    \hline
+    \rowcolor{lightgray} \textbf{Method} & \textbf{AUC} & \textbf{Accuracy} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
+    \hline
+    Raw counts & 0.92 & 0.84 & 0.85 & \cellcolor{green} 0.82 & 0.88 \\
+    \hline
+    Raw counts, add-1 smoothing & 0.92 & 0.85 & 0.85 & \cellcolor{green} 0.82 & 0.89 \\
+    \hline
+    Raw counts, add-2 smoothing & 0.92 & 0.85 & 0.85 & \cellcolor{green} 0.82 & 0.89 \\
+    \hline
+    Raw counts, add-5 smoothing & 0.92 & 0.84 & 0.85 & \cellcolor{green} 0.82 & 0.88 \\
+    \hline
+    \cellcolor{green} PMI\textsubscript{0} & \cellcolor{green} 0.93 & \cellcolor{green} 0.86 & \cellcolor{green} 0.86 & \cellcolor{green} 0.82 & 0.92 \\
+    \hline
+    PMI\textsubscript{0} add-1 smoothing & 0.91 & 0.83 & 0.84 & 0.81 & 0.88 \\
+    \hline
+    PMI\textsubscript{0} add-2 smoothing & 0.92 & 0.85 & 0.85 & \cellcolor{green} 0.82 & 0.89 \\
+    \hline
+    PMI\textsubscript{0} add-5 smoothing & 0.92 & 0.85 & 0.85 & \cellcolor{green} 0.82 & 0.89 \\
+    \hline
+    PPMI & \cellcolor{green} 0.93 & 0.85 & \cellcolor{green} 0.86 & \cellcolor{green} 0.82 & 0.91 \\
+    \hline
+    PPMI add-1 smoothing & \cellcolor{green} 0.93 & 0.85 & \cellcolor{green} 0.86 & \cellcolor{green} 0.82 & 0.89 \\
+    \hline
+    PPMI add-2 smoothing & \cellcolor{green} 0.93 & 0.84 & 0.85 & 0.81 & 0.90 \\
+    \hline
+    PPMI add-5 smoothing & 0.92 & 0.85 & 0.86 & \cellcolor{green} 0.82 & 0.89 \\
+    \hline
+    SPMI\textsubscript{0} ($k=5$) & 0.90 & 0.82 & 0.83 & 0.80 & 0.87 \\
+    \hline
+    SPMI\textsubscript{0} add-1 smoothing & 0.91 & 0.83 & 0.84 & 0.81 & 0.89 \\
+    \hline
+    SPMI\textsubscript{0} add-2 smoothing & 0.92 & 0.85 & 0.85 & \cellcolor{green} 0.82 & 0.89 \\
+    \hline
+    SPMI\textsubscript{0} add-5 smoothing & 0.92 & 0.85 & 0.85 & \cellcolor{green} 0.82 & 0.89 \\
+    \hline
+    SPPMI & 0.91 & 0.82 & 0.83 & 0.81 & 0.85 \\
+    \hline
+    SPPMI add-1 smoothing & 0.89 & 0.82 & 0.83 & 0.77 & 0.92 \\
+    \hline
+    SPPMI add-2 smoothing & 0.89 & 0.83 & 0.84 & 0.78 & 0.91 \\
+    \hline
+    SPPMI add-5 smoothing & 0.88 & 0.81 & 0.83 & 0.75 & \cellcolor{green} 0.94 \\
+    \hline
+  \end{tabular}
+  \label{tab:wemb150}
+\end{table}
+
+\hypertarget{dimensions-1}{%
+\subsubsection{500 dimensions}\label{dimensions-1}}
+
+\begin{table}[htp]
+ \caption{Binary clf results using word embeddings dim 500}
+  \centering
+  \begin{tabular}{|l|c|c|c|c|c|}
+    \hline
+    \rowcolor{lightgray} \textbf{Method} & \textbf{AUC} & \textbf{Accuracy} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
+    \hline
+    Raw counts & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & 0.83 & 0.93 \\
+    \hline
+    Raw counts, add-1 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & 0.83 & 0.93 \\
+    \hline
+    Raw counts, add-2 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & 0.83 & 0.93 \\
+    \hline
+    Raw counts, add-5 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & 0.83 & 0.93 \\
+    \hline
+    \cellcolor{green} PMI\textsubscript{0} & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & 0.83 & \cellcolor{green} 0.94 \\
+    \hline
+    PMI\textsubscript{0} add-1 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & 0.83 & 0.93 \\
+    \hline
+    \cellcolor{green} PMI\textsubscript{0} add-2 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & \cellcolor{green} 0.84 & 0.93 \\
+    \hline
+    PMI\textsubscript{0} add-5 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & 0.83 & 0.93 \\
+    \hline
+    PPMI & \cellcolor{green} 0.93 & 0.86 & 0.87 & 0.83 & 0.92 \\
+    \hline
+    PPMI add-1 smoothing & \cellcolor{green} 0.93 & 0.86 & 0.87 & 0.83 & 0.92 \\
+    \hline
+    PPMI add-2 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & 0.87 & 0.83 & 0.92 \\
+    \hline
+    PPMI add-5 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & 0.87 & 0.83 & 0.93 \\
+    \hline
+    SPMI\textsubscript{0} ($k=5$) & 0.92 & 0.86 & 0.87 & 0.82 & 0.93 \\
+    \hline
+    SPMI\textsubscript{0} add-1 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & 0.83 & 0.93 \\
+    \hline
+    \cellcolor{green} SPMI\textsubscript{0} add-2 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & \cellcolor{green} 0.84 & 0.93 \\
+    \hline
+    SPMI\textsubscript{0} add-5 smoothing & \cellcolor{green} 0.93 & \cellcolor{green} 0.87 & \cellcolor{green} 0.88 & 0.83 & 0.93 \\
+    \hline
+    SPPMI & 0.92 & 0.84 & 0.85 & 0.81 & 0.89 \\
+    \hline
+    SPPMI add-1 smoothing & 0.90 & 0.81 & 0.83 & 0.77 & 0.91 \\
+    \hline
+    SPPMI add-2 smoothing & 0.89 & 0.83 & 0.84 & 0.78 & 0.91 \\
+    \hline
+    SPPMI add-5 smoothing & 0.88 & 0.81 & 0.83 & 0.75 & \cellcolor{green} 0.94 \\
+    \hline
+  \end{tabular}
+  \label{tab:wemb500}
+\end{table}
+
+\hypertarget{choosing-dimension-of-word-embeddings}{%
+\subsubsection{Choosing dimension of word
+embeddings}\label{choosing-dimension-of-word-embeddings}}
+
+All word-context matrices were formed using unshifted
+PMI\textsubscript{0} with no Laplace smoothing.
+
+\begin{table}[htp]
+ \caption{Binary clf results using word embeddings with varying dimensions}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \rowcolor{lightgray} \textbf{Dimensions} & \textbf{AUC} & \textbf{Accuracy} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
+    \hline
+    50 & 0.903 & 0.804 & 0.810 & \cellcolor{green} 0.795 & 0.839 \\
+    \hline
+    100 & \cellcolor{green} 0.911 & 0.796 & 0.804 & 0.782 & 0.846 \\
+    \hline
+    150 & 0.910 & 0.795 & 0.815 & 0.743 & \cellcolor{green} 0.904 \\
+    \hline
+    200 & 0.902 & 0.800 & 0.816 & 0.758 & 0.889 \\
+    \hline
+    \cellcolor{green} 250 & 0.904 & \cellcolor{green} 0.807 & \cellcolor{green} 0.822 & 0.774 & 0.889 \\
+    \hline
+    500 & 0.908 & 0.789 & 0.810 & 0.746 & 0.896 \\
+    \hline
+  \end{tabular}
+  \label{tab:wedim}
 \end{table}
 
 \bibliographystyle{unsrt}
