@@ -20,10 +20,6 @@ output:
     keep_tex: true
 ---
 
-```{r, echo = F}
-#library(bookdown)
-```
-
 \newpage
 
 # Introduction
@@ -97,15 +93,13 @@ where $k$ is a user-specified parameter which incorporates negative sampling [@l
 #### Use of start & end tokens
 We add “\<START\>” and “\<END\>” tokens to the beginning and end of each tweet in order to capture information about which tokens (or words) collocate with the beginning or end of a tweet. For example, we might expect the "\#" token to appear more often with the "\<END\>" token than other vocabulary words because hashtags are often included at the end of a tweet.
 
-Overall, it seemed that larger context windows prevailed - a window size of 15 +/- performed the best (I tried window sizes of 1, 2, 4, 6, 10, 15, and 20). I find this interesting because tweets are such short posts (perhaps 30 words encompasses the entirety of the tweet for most tweets). Incorporating add-one Laplace smoothing and shifted [P]PMI decreased performance across all metrics (accuracy, precision, recall, ROC AUC, and F1 score). Interestingly, PMI often outperformed not only raw frequencies but also PPMI (positive PMI). However, with other optimal hyperparameters held constant, there was virtually no difference in performance between PMI and PPMI.
-
-**The best results included ROC AUC of 0.94, accuracy of 0.89, F1 score of 0.90, precision of 0.86, and recall of 0.94. These scores are all higher than the best results from last week and were obtained using the same nested CV procedure (3 folds for inner loop; 5 folds for outer loop).** NOTE: These should be replaced with the correct numbers.
-
 Latent variable methods are subsequently applied to the word embeddings in order to reduce the dimensionality. For more information on this process, please see Section \ref{sec:LVpipe}.
 
 Finally, we average over the word embeddings for the words in each tweet to obtain a single vector representation for each tweet:
 $$\mathbf{v}_i=\frac {1} {T_i} \sum_{j=1}^{T_i}{\mathbf{e}_j}$$
 where $\mathbf{v}_i$ is the vector representation for tweet $i$, $\mathbf{e}_j$ is the embedding for word $j$ in tweet $i$, and there are $T_i$ words in tweet $i$. Note that in our experiments $\mathbf{e}_j \in \mathbbm{R}^{250}$ and, therefore, $\mathbf{v}_i \in \mathbbm{R}^{250}$.
+
+For more details on the performance of different word embedding hyperparameter combinations, see the Appendix.
 
 - BERT embeddings from pre-trained model
 
@@ -117,7 +111,7 @@ In order to perform PCA, we rescale the data matrix and then apply Singular Valu
 $$\mathbf{X = U \Sigma V}^T$$
 where $\mathbf{\Sigma}$ is a diagonal matrix containing the singular values of $\mathbf{X}$, $\mathbf{U}$ is BLAH, and $\mathbf{V}^T$ is BLAHBLAH.
 
-To achieve PCA, we can use truncated SVD. In essence, we perform SVD and keep only the columns of $\mathbf{U}$ and $\mathbf{V}^T$ that correspond to the largest $k$ singular values in the diagonal matrix $\mathbf{\Sigma}$, where $k$ is the desired order for the approximation of our initial data matrix. Therefore, if $k$ is less than $m$, we have achieved dimensionality reduction. In our experiments, we use $k = 250$.
+To achieve PCA, we can use truncated SVD. In essence, we perform SVD and keep only the columns of $\mathbf{U}$ and $\mathbf{V}^T$ that correspond to the largest $k$ singular values in the diagonal matrix $\mathbf{\Sigma}$, where $k$ is the desired order for the approximation of our initial data matrix. Therefore, if $k$ is less than $m$, we have achieved dimensionality reduction. In our experiments, we use $k \in \{50, 100, 150, 200, 250, 500\}$.
 
 ### Independent Component Analysis
 ICA is one method to address the blind source separation problem (also referred to as the blind signal separation problem), which can be represented in matrix form as follows:
@@ -186,14 +180,110 @@ where $A$ is the set of words that the classifier associated with the correct cl
 
 # Results
 \label{sec:results}
-Report evaluation metrics for...
+Below we have included the results for both one-class classification and binary classification experiments. We report the standard performance evaluation metrics for three outlier detection models and one binary classification model. For our novel explainability metric, we report results for the binary classification set-up.
 
-- One-class SVM
-    - Performance
-    - Explainability
-- Binary SVM
-    - Performance
-    - Explainability
+## Performance
+To assess performance, we report the macro-averaged ROC-AUC, accuracy, F\textsubscript{1}-score, precision, and recall values. Overall, the binary classification experiment had much greater success than any of the three one-class classification models.
+
+### One-class classification
+For one-class classification, we compared the performance of three models: one-class SVM (OCSVM), isolation forest, and local outlier factor (LOF).
+
+\begin{table}
+ \caption{OCSVM Results}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \rowcolor{lightgray} \textbf{Dimensions} & \textbf{AUC} & \textbf{Accuracy} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
+    \hline
+    50 & \cellcolor{green} 0.764 & 0.668 & \cellcolor{green} 0.630 & 0.695 & 0.668 \\
+    \hline
+    \cellcolor{green} 100 & 0.750 & \cellcolor{green} 0.671 & 0.629 & \cellcolor{green} 0.709 & \cellcolor{green} 0.671 \\
+    \hline
+    150 & 0.730 & 0.654 & 0.598 & 0.693 & 0.654 \\
+    \hline
+    200 & 0.725 & 0.636 & 0.579 & 0.668 & 0.636 \\
+    \hline
+    250 & 0.731 & 0.648 & 0.586 & 0.691 & 0.648 \\
+    \hline
+    500 & 0.688 & 0.630 & 0.539 & 0.684 & 0.630 \\
+    \hline
+  \end{tabular}
+  \label{tab:ocsvm}
+\end{table}
+
+\begin{table}
+ \caption{Isolation Forest Results}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \rowcolor{lightgray} \textbf{Dimensions} & \textbf{AUC} & \textbf{Accuracy} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
+    \hline
+    \rowcolor{green} 50 & 0.643 & 0.552 & 0.616 & 0.673 & 0.552 \\
+    \hline
+    100 & 0.591 & 0.532 & 0.558 & 0.656 & 0.532 \\
+    \hline
+    150 & 0.494 & 0.521 & 0.542 & 0.546 & 0.521 \\
+    \hline
+    200 & 0.545 & 0.516 & 0.552 & 0.537 & 0.516 \\
+    \hline
+    250 & 0.497 & 0.511 & 0.531 & 0.543 & 0.511 \\
+    \hline
+    500 & 0.527 & 0.504 & 0.507 & 0.505 & 0.504 \\
+    \hline
+  \end{tabular}
+  \label{tab:iforest}
+\end{table}
+
+\begin{table}
+ \caption{LOF Results}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \rowcolor{lightgray} \textbf{Dimensions} & \textbf{AUC} & \textbf{Accuracy} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
+    \hline
+    \cellcolor{green} 50 & 0.658 & \cellcolor{green} 0.539 & \cellcolor{green} 0.552 & 0.598 & \cellcolor{green} 0.539 \\
+    \hline
+    100 & 0.639 & 0.536 & 0.526 & \cellcolor{green} 0.608 & 0.536 \\
+    \hline
+    150 & \cellcolor{green} 0.659 & 0.513 & 0.513 & 0.515 & 0.513 \\
+    \hline
+    200 & 0.644 & 0.529 & 0.536 & 0.580 & 0.529 \\
+    \hline
+    250 & 0.652 & 0.529 & 0.540 & 0.586 & 0.529 \\
+    \hline
+    500 & 0.613 & 0.495 & 0.510 & 0.470 & 0.495 \\
+    \hline
+  \end{tabular}
+  \label{tab:lof}
+\end{table}
+
+### Binary classification
+For binary classification, we show results for our binary SVM experiment.
+
+\begin{table}
+ \caption{Binary SVM Results}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \rowcolor{lightgray} \textbf{Dimensions} & \textbf{AUC} & \textbf{Accuracy} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
+    \hline
+    50 & 0.903 & 0.804 & 0.801 & 0.818 & 0.804 \\
+    \hline
+    100 & \cellcolor{green} 0.911 & 0.796 & 0.793 & 0.817 & 0.796 \\
+    \hline
+    150 & 0.906 & 0.795 & 0.792 & 0.810 & 0.795 \\
+    \hline
+    200 & 0.901 & 0.800 & 0.798 & 0.815 & 0.800 \\
+    \hline
+    \cellcolor{green} 250 & 0.904 & \cellcolor{green} 0.807 & \cellcolor{green} 0.804 & \cellcolor{green} 0.827 & \cellcolor{green} 0.807 \\
+    \hline
+    500 & 0.908 & 0.789 & 0.785 & 0.814 & 0.789 \\
+    \hline
+  \end{tabular}
+  \label{tab:svm}
+\end{table}
+
+## Explainability
 
 # Discussion
 \label{sec:discuss}
