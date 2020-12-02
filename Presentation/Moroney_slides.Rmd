@@ -15,9 +15,12 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## 
-![Twitter adds warning labels to tweets.](./DJT_tweet.png)
+![Twitter adds warning labels to tweets.](./twitter_misinfo_1.jpg)
 
-## Dataset
+##
+![Twitter removes misleading content.](./twitter_misinfo_2.jpg)
+
+## Dataset from Boukouvalas et al. (2020)
 - 560 tweets, perfectly balanced classes
 - sample of 282,201 users in Canada
 - tweets posted between January 1 - March 13, 2020
