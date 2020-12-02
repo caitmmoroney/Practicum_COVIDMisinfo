@@ -483,13 +483,23 @@ linear combinations.
 \hypertarget{classification}{%
 \subsection{Classification}\label{classification}}
 
-\begin{itemize}
-\tightlist
-\item
-  One-class SVM
-\item
-  Binary SVM
-\end{itemize}
+In this study, we perform both one-class classification (also referred
+to as outlier detection) and binary classification in order to automate
+the detection of unreliable tweets. By using the Twitter dataset
+produced by Boukouvalas et al. (2020), we can appropriately apply a
+binary classification model because the dataset was structured as
+perfectly balanced with 280 reliable tweets and 280 unreliable tweets.
+However, we believe it is also valid to frame the research question as a
+one-class classification problem: in the real world, we might expect the
+number of reliable tweets to far outweigh the number of unreliable
+tweets. More generally, depending on how we define misinformation, we
+may see severe imbalance in the ratio of misinformation to reliable
+information. In such a situation, outlier detection models may be better
+suited to correctly identifying unreliable content than binary
+classification models. In terms of algorithms, for outlier detection, we
+employ one-class support vector machines (OCSVM), isolation forest, and
+local outlier factor models (LOF). For binary classification, we use
+binary SVM.
 
 \hypertarget{evaluation}{%
 \subsection{Evaluation}\label{evaluation}}
@@ -529,15 +539,58 @@ our dataset. These guidelines are summarized in Table 1 from Boukouvalas
 et al. (2020). This table has been reproduced in the appendix (see Table
 \ref{tab:table1words}).
 
-\hypertarget{lime}{%
-\subsubsection{LIME}\label{lime}}
+\hypertarget{explainability-tools}{%
+\subsubsection{Explainability tools}\label{explainability-tools}}
 
-Explain LIME.
+In order to assess the explainability of our word embedding plus
+classifier pipeline, we first turned to LIME (Ribeiro, Singh, and
+Guestrin 2016), a popular explainability model which produces local
+explanations for classifier decisions. In the context of an NLP
+classification task, LIME attempts to provide an accurate explanation
+for why the classifier in question made a classification decision for a
+given document based on the featurization method used. For this study,
+we can apply LIME to obtain an explanation for why the SVM classifier
+classified a given tweet as unreliable based on the words which appear
+in that tweet; LIME can tell us which class the classifier associates
+each word with, as well as the relative importance of each word in the
+machine's decision-making process for that tweet.
 
-\hypertarget{ica}{%
-\subsubsection{ICA}\label{ica}}
+While LIME is a brilliant tool for assessing explainability and
+classifier trustworthiness (Ribeiro, Singh, and Guestrin 2016), we
+believe ICA can provide interpretability on its own. Because ICA is not
+a black box, we can access information about how important certain words
+are from the estimated \(\mathbf{\hat{A}}\) matrix. However, it is
+important to note that whereas LIME takes as inputs the pipeline from
+raw text to model features and the trained classifier so that it can
+produce a local explanation for a particular tweet prediction, the ICA
+explainability framework we propose is instead a global explainability
+approach which does not take class predictions (or even the classifier)
+into consideration.
 
-Explain ICA explainability.
+Our proposed framework involves obtaining word importance weights by
+extracting the word weights from the \(\mathbf{\hat{A}}\) matrix. Recall
+that the ICA decomposition begins with the \(\mathbf{\hat{U}}\) matrix
+from the SVD factorization of the word-word co-occurrence matrix. Thus,
+the rows of \(\mathbf{\hat{U}}\) are the target words, and its columns
+are topics in the sense that they are weighted linear combinations of
+words. Therefore, the rows of \(\mathbf{\hat{A}}\) are also the target
+words, and the columns of \(\mathbf{\hat{A}}\) are concepts, or weighted
+linear combinations of SVD topics.\footnote{We could also reimagine the
+  concepts as topics themselves with adjusted word weights.} Though
+simplistic, our method involves a logical aggregation of these weights
+such that we can obtain global word importance values. We define the
+importance of the \(i^{th}\) target word as follows:
+\[g_i = \frac {1}{k} \sum_{j=1}^{k}{|a_{ij}|}\] where \(k\) is the
+number of SVD features (and therefore the number of ICA features), and
+\(|a_{ij|}\) is the magnitude of the \(i^{th}\) word's importance in
+topic \(j\).
+
+With these values, we can produce plots similar to those from the LIME
+output which show the relative importance of each word within a tweet.
+As mentioned above, an important difference is that SVD and ICA are
+unsupervised methods, so our word importance weights do not have any
+class association, whereas LIME provides both importance magnitude and
+sign (signifying class association).
 
 \hypertarget{global}{%
 \paragraph{Global}\label{global}}
