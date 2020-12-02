@@ -20,13 +20,14 @@ knitr::opts_chunk$set(echo = FALSE)
 ##
 ![Twitter removes misleading content.](./twitter_misinfo_2.jpg)
 
-## Dataset from Boukouvalas et al. (2020)
+## Dataset from Boukouvalas et al. (2020) ^[The [data](https://zoisboukouvalas.github.io/COVID19_Twitter_Dataset.xlsx) are available online at Dr. Boukouvalas' [website](https://zoisboukouvalas.github.io/Code.html).]
 - 560 tweets, perfectly balanced classes
 - sample of 282,201 users in Canada
 - tweets posted between January 1 - March 13, 2020
 - manually labeled as "reliable" or "unreliable"
 
 ## 
+\begin{footnotesize}
 \begin{table}[htp]
  \caption{Misinformation rules from Boukouvalas et al. (2020)}
   \centering
@@ -45,8 +46,9 @@ knitr::opts_chunk$set(echo = FALSE)
   \end{tabular}
   \label{tab:table1words}
 \end{table}
+\end{footnotesize}
 
-## Methodology
+## Overview
 
 - raw text
 - word embeddings
@@ -68,16 +70,9 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Latent Variable Methods
 \begin{figure}
   \centering
-  \matbox{3}{3}{n}{n}{X} = 
-  \matbox{3}{2}{n}{k}{U} \raiserows{0.5}{\matbox{2}{2}{k}{k}{D}}
-  \raiserows{0.5}{\matbox{2}{3}{k}{n}{V^T}}
-  \newline
-  \newline
-  \newline
-  \matbox{3}{2}{n}{k}{U} = 
-  \matbox{3}{2}{n}{k}{A} \raiserows{0.5}{\matbox{2}{2}{k}{k}{S}}
+  \matbox{3}{3}{n}{n}{X} $\xrightarrow{\text{PCA}}$ \matbox{2}{3}{k}{n}{\widetilde{X}} $\xrightarrow{\text{ICA}}$ \matbox{3}{2}{n}{k}{\mathbf{\hat{S}}^T}
   \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
-  \label{fig:matdec}
+  \label{fig:latvar}
 \end{figure}
 
 ## Tweet Embeddings
@@ -97,8 +92,8 @@ $$\mathrm{tweet} \begin{bmatrix} v_{i1} \\ \vdots \\ v_{ik} \end{bmatrix} = \fra
 
 ## ICA: Global Explainability
 We define the importance of the $i^{th}$ target word as follows:
-$$g_i = \frac {1}{k} \sum_{j=1}^{k}{|a_{ij}|}$$
-where $k$ is the number of SVD features (and therefore the number of ICA features), and $|a_{ij|}$ is the magnitude of the $i^{th}$ word's importance in topic $j$.
+$$g_i = \frac {1}{k} \sum_{j=1}^{k}{|s_{ji}|}$$
+where $k$ is the number of SVD features (and therefore the number of ICA features), and $|s_{ji}|$ is the magnitude of the $i^{th}$ word's importance in topic $j$.
 
 ## Example: Tweet 170
 CNBC ADVICE NOW: Coronavirus is the flu. Wash your hands. Book a vacation. We’ll look back on this and laugh.
