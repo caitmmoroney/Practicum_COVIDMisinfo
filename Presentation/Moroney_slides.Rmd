@@ -17,9 +17,6 @@ knitr::opts_chunk$set(echo = FALSE)
 ## 
 ![Twitter [adds warning labels to tweets.](https://blog.twitter.com/en_us/topics/product/2020/updating-our-approach-to-misleading-information.html)](./twitter_misinfo_1.jpg)
 
-##
-![Twitter removes misleading content.](./twitter_misinfo_2.jpg)
-
 ## Dataset from Boukouvalas et al. (2020) ^[The [data](https://zoisboukouvalas.github.io/COVID19_Twitter_Dataset.xlsx) are available online at Dr. Boukouvalas' [website](https://zoisboukouvalas.github.io/Code.html).]
 - 560 tweets, perfectly balanced classes
 - sample of 282,201 users in Canada
