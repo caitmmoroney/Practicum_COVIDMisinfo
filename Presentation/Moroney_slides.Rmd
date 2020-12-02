@@ -43,7 +43,6 @@ knitr::opts_chunk$set(echo = FALSE)
 \end{table}
 
 ## Methodology
-Pipeline:
 
 - raw text
 - word embeddings
@@ -53,7 +52,14 @@ Pipeline:
 - classification
 - evaluation
 
-## Word-Word Co-occurrence Matrix
+## Word-Word Co-Occurrence Matrix
+
+- text cleaning: **remove stop words, lemmatize text, convert to lowercase, remove special characters**, remove punctuation
+- context window size: 1, 2, 4, 6, 10, **15**, 20
+- weighting: raw frequencies, **PMI**, PPMI
+- Laplace smoothing: add-1, add-2
+- shifted or **unshifted**: k = 5, **k = 1**
+- **start/end tokens**
 
 ## Latent Variable Methods
 \begin{figure}
@@ -87,10 +93,8 @@ Tweet 170: CNBC ADVICE NOW: Coronavirus is the flu. Wash your hands. Book a vaca
 ![Comparing LIME and ICA explainability.](./tweet170_plots.png){#id .class width=75% height=75%}
 
 ## Results
-
-## One-class Classification
 \begin{table}
- \caption{Outlier Detection Results}
+ \caption{One-class classification}
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
@@ -98,17 +102,19 @@ Tweet 170: CNBC ADVICE NOW: Coronavirus is the flu. Wash your hands. Book a vaca
     \hline
     OCSVM & 0.750 & 0.671 & 0.629 & 0.709 & 0.671 \\
     \hline
-    Isolation Forest & 0.911 & 0.796 & 0.793 & 0.817 & 0.796 \\
+    Isolation Forest & 0.643 & 0.552 & 0.616 & 0.673 & 0.552 \\
     \hline
-    LOF & 0.906 & 0.795 & 0.792 & 0.810 & 0.795 \\
+    LOF & 0.658 & 0.539 & 0.552 & 0.598 & 0.539 \\
     \hline
   \end{tabular}
   \label{tab:oc}
 \end{table}
 
-## Binary Classification
+OCSVM used word embeddings of length 100; isolation forest and LOF used embeddings of length 50.
+
+## Results (continued)
 \begin{table}
- \caption{Binary SVM Results}
+ \caption{Binary SVM performance}
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
@@ -130,23 +136,46 @@ Tweet 170: CNBC ADVICE NOW: Coronavirus is the flu. Wash your hands. Book a vaca
   \label{tab:svm}
 \end{table}
 
+## Results (continued)
+\begin{table}
+ \caption{Binary SVM explainability}
+  \centering
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Experiment} & \textbf{Penalty} & \textbf{No Penalty} \\
+    \hline
+    1: Correctly predicted & 0.331 & 0.534 \\
+    \hline
+    1: Wrongly predicted & 0.222 & 0.278 \\
+    \hline
+    1: Aggregated & 0.326 & 0.521 \\
+    \hline
+    2: Correctly predicted & 0.356 & 0.593 \\
+    \hline
+    2: Wrongly predicted & 0.074 & 0.315 \\
+    \hline
+    2: Aggregated & 0.342 & 0.579 \\
+    \hline
+    3a: Correctly predicted & 0.396 & 0.593 \\
+    \hline
+    3a: Wrongly predicted & 0.444 & 0.500 \\
+    \hline
+    3a: Aggregated & 0.399 & 0.588 \\
+    \hline
+    3b: Correctly predicted & 0.378 & 0.619 \\
+    \hline
+    3b: Wrongly predicted & 0.148 & 0.407 \\
+    \hline
+    3b: Aggregated & 0.367 & 0.608 \\
+    \hline
+  \end{tabular}
+  \label{tab:expl}
+\end{table}
+
 ## Conclusion
 Future work:
 
 - local ICA explainability
 - different word embeddings (e.g., BERT)
 - different classifiers (e.g., neural net)
-
-
-## Slide with R Output
-
-```{r cars, echo = TRUE}
-summary(cars)
-```
-
-## Slide with Plot
-
-```{r pressure}
-plot(pressure)
-```
 
