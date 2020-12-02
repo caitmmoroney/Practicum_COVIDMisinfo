@@ -90,6 +90,7 @@ $$\mathrm{tweet} \begin{bmatrix} v_{i1} \\ \vdots \\ v_{ik} \end{bmatrix} = \fra
 - Evaluation: performance & explainability
 
 ## LIME: Local Explainability
+![LIME output for unreliable tweet.](./LIME_output.png)
 
 ## ICA: Global Explainability
 We define the importance of the $i^{th}$ target word as follows:
