@@ -1,0 +1,152 @@
+---
+title: "COVID-19 Misinformation Detection"
+author: "Caitlin Moroney"
+date: "12/2/2020"
+output:
+  beamer_presentation:
+    includes:
+      in_header:
+        - present.sty
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## 
+![Twitter adds warning labels to tweets.](./DJT_tweet.png)
+
+## Dataset
+- 560 tweets, perfectly balanced classes
+- sample of 282,201 users in Canada
+- tweets posted between January 1 - March 13, 2020
+- manually labeled as "reliable" or "unreliable"
+
+## 
+\begin{table}[htp]
+ \caption{Misinformation rules from Boukouvalas et al. (2020)}
+  \centering
+  \begin{tabular}{p{4cm}|p{6cm}}
+    \hline
+    \textbf{Linguistic Feature} & \textbf{Example from Dataset} \\ [0.5 ex]
+    \hline\hline
+    Hyperbolic, intensified, superlative, or emphatic language & e.g., ‘blame’, ‘accuse’, ‘refuse’, ‘catastrophe’, ‘chaos’, ‘evil’ \\
+    \hline
+    Greater use of punctuation and/or special characters & e.g., e.g., ‘YA THINK!!?!!?!’, ‘Can we PLEASE stop spreading the lie that Coronavirus is super super super contagious? It’s not. It has a contagious rating of TWO’ \\
+    \hline
+    Strongly emotional or subjective language & e.g., ‘fight’, ‘danger’, ‘hysteria’, ‘panic’, ‘paranoia’, ‘laugh’, ‘stupidity’ or other words indicating fear, surprise, alarm, anger, and so forth \\
+    \hline
+    Greater use of verbs of perception and/or opinion & e.g., ‘hear’, ‘see’, ‘feel’, ‘suppose’, ‘perceive’, ‘look’, ‘appear’, ‘suggest’, ‘believe’, ‘pretend’ \\
+    \hline
+  \end{tabular}
+  \label{tab:table1words}
+\end{table}
+
+## Methodology
+Pipeline:
+
+- raw text
+- word embeddings
+    - word-word co-occurrence matrix
+    - latent variable methods
+- tweet embeddings
+- classification
+- evaluation
+
+## Word-Word Co-occurrence Matrix
+
+## Latent Variable Methods
+\begin{figure}
+  \centering
+  \matbox{3}{3}{n}{n}{X} = 
+  \matbox{3}{2}{n}{k}{U} \raiserows{0.5}{\matbox{2}{2}{k}{k}{D}}
+  \raiserows{0.5}{\matbox{2}{3}{k}{n}{V^T}}
+  \newline
+  \newline
+  \newline
+  \matbox{3}{2}{n}{k}{U} = 
+  \matbox{3}{2}{n}{k}{A} \raiserows{0.5}{\matbox{2}{2}{k}{k}{S}}
+  \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
+  \label{fig:matdec}
+\end{figure}
+
+## Tweet Embeddings
+$$\mathbf{v}_i=\frac {1} {T_i} \sum_{j=1}^{T_i}{\mathbf{e}_j}$$
+
+## Classification
+
+## Evaluation
+
+## LIME: Local Explainability
+
+## ICA: Global Explainability
+
+## Example
+Tweet 170: CNBC ADVICE NOW: Coronavirus is the flu. Wash your hands. Book a vacation. We’ll look back on this and laugh.
+
+![Comparing LIME and ICA explainability.](./tweet170_plots.png){#id .class width=75% height=75%}
+
+## Results
+
+## One-class Classification
+\begin{table}
+ \caption{Outlier Detection Results}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \textbf{Model} & \textbf{AUC} & \textbf{Accuracy} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
+    \hline
+    OCSVM & 0.750 & 0.671 & 0.629 & 0.709 & 0.671 \\
+    \hline
+    Isolation Forest & 0.911 & 0.796 & 0.793 & 0.817 & 0.796 \\
+    \hline
+    LOF & 0.906 & 0.795 & 0.792 & 0.810 & 0.795 \\
+    \hline
+  \end{tabular}
+  \label{tab:oc}
+\end{table}
+
+## Binary Classification
+\begin{table}
+ \caption{Binary SVM Results}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \textbf{Dimensions} & \textbf{AUC} & \textbf{Accuracy} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
+    \hline
+    50 & 0.903 & 0.804 & 0.801 & 0.818 & 0.804 \\
+    \hline
+    100 & 0.911 & 0.796 & 0.793 & 0.817 & 0.796 \\
+    \hline
+    150 & 0.906 & 0.795 & 0.792 & 0.810 & 0.795 \\
+    \hline
+    200 & 0.901 & 0.800 & 0.798 & 0.815 & 0.800 \\
+    \hline
+    250 & 0.904 & 0.807 & 0.804 & 0.827 & 0.807 \\
+    \hline
+    500 & 0.908 & 0.789 & 0.785 & 0.814 & 0.789 \\
+    \hline
+  \end{tabular}
+  \label{tab:svm}
+\end{table}
+
+## Conclusion
+Future work:
+
+- local ICA explainability
+- different word embeddings (e.g., BERT)
+- different classifiers (e.g., neural net)
+
+
+## Slide with R Output
+
+```{r cars, echo = TRUE}
+summary(cars)
+```
+
+## Slide with Plot
+
+```{r pressure}
+plot(pressure)
+```
+

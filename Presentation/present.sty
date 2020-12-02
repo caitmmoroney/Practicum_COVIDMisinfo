@@ -1,0 +1,25 @@
+% to create matrix decomposition diagram (CM)
+\usepackage{stackengine}
+
+\stackMath
+\newlength\matfield
+\newlength\tmplength
+\def\matscale{1.}
+\newcommand\dimbox[3]{%
+  \setlength\matfield{\matscale\baselineskip}%
+  \setbox0=\hbox{\vphantom{X}\smash{#3}}%
+  \setlength{\tmplength}{#1\matfield-\ht0-\dp0}%
+  \fboxrule=1pt\fboxsep=-\fboxrule\relax%
+  \fbox{\makebox[#2\matfield]{\addstackgap[.5\tmplength]{\box0}}}%
+}
+\newcommand\raiserows[2]{%
+   \setlength\matfield{\matscale\baselineskip}%
+   \raisebox{#1\matfield}{#2}%
+}
+\newcommand\matbox[5]{
+  \stackunder{\dimbox{#1}{#2}{$\mathbf{#5}$}}{\scriptstyle(#3\times #4)}%
+}
+\parskip 1em
+
+% for indicator function (CM)
+\usepackage{bbm}
