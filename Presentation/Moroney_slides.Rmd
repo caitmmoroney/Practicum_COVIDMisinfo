@@ -100,7 +100,7 @@ where $k$ is the number of SVD features (and therefore the number of ICA feature
 ## Example: Tweet 170
 CNBC ADVICE NOW: Coronavirus is the flu. Wash your hands. Book a vacation. We’ll look back on this and laugh.
 
-![Comparing LIME and ICA explainability.](./tweet170_plots.png){#id .class width=75% height=75%}
+![Comparing LIME and ICA explainability.](./tweet170_plots.png){#id .class width=70% height=70%}
 
 ## Explainability metric
 Goal: value that captures how "explainable" a classifier's predictions are (with respect to human classification)
