@@ -93,26 +93,6 @@ where there are $T_i$ table 1 words in tweet $i$, $w_j$ is the $j^{th}$ table 1 
 
 ## Results
 \begin{table}
- \caption{One-class classification}
-  \centering
-  \begin{tabular}{|c|c|c|c|c|c|}
-    \hline
-    \textbf{Model} & \textbf{AUC} & \textbf{Accuracy} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
-    \hline
-    OCSVM & 0.750 & 0.671 & 0.629 & 0.709 & 0.671 \\
-    \hline
-    Isolation Forest & 0.643 & 0.552 & 0.616 & 0.673 & 0.552 \\
-    \hline
-    LOF & 0.658 & 0.539 & 0.552 & 0.598 & 0.539 \\
-    \hline
-  \end{tabular}
-  \label{tab:oc}
-\end{table}
-
-OCSVM used word embeddings of length 100; isolation forest and LOF used embeddings of length 50.
-
-## Results (continued)
-\begin{table}
  \caption{Binary SVM performance}
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
