@@ -77,9 +77,9 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Tweet Embeddings
 A tweet embedding is the average of the word embeddings for the words that occur in that tweet.
-$$\mathbf{v}_i=\frac {1} {T_i} \sum_{j=1}^{T_i}{\mathbf{e}_j}$$
+$$\mathbf{v}_i=\frac {1} {T_i} \sum_{j=1}^{T_i}{\mathbf{s}_j}$$
 Example tweet: "Covid is fake news."
-$$\mathrm{tweet} \begin{bmatrix} v_{i1} \\ \vdots \\ v_{ik} \end{bmatrix} = \frac {\mathrm{covid} \begin{bmatrix} e_{11} \\ \vdots \\ e_{1k} \end{bmatrix} + \mathrm{is} \begin{bmatrix} e_{21} \\ \vdots \\ e_{2k} \end{bmatrix} + \mathrm{fake} \begin{bmatrix} e_{31} \\ \vdots \\ e_{3k} \end{bmatrix} + \mathrm{news} \begin{bmatrix} e_{41} \\ \vdots \\ e_{4k} \end{bmatrix}} {4}$$
+$$\mathrm{tweet} \begin{bmatrix} v_{i1} \\ \vdots \\ v_{ik} \end{bmatrix} = \frac {\mathrm{covid} \begin{bmatrix} s_{11} \\ \vdots \\ s_{1k} \end{bmatrix} + \mathrm{is} \begin{bmatrix} s_{21} \\ \vdots \\ s_{2k} \end{bmatrix} + \mathrm{fake} \begin{bmatrix} s_{31} \\ \vdots \\ s_{3k} \end{bmatrix} + \mathrm{news} \begin{bmatrix} s_{41} \\ \vdots \\ s_{4k} \end{bmatrix}} {4}$$
 
 ## Classification
 
@@ -103,12 +103,8 @@ CNBC ADVICE NOW: Coronavirus is the flu. Wash your hands. Book a vacation. We’
 ## Explainability metric
 Goal: value that captures how "explainable" a classifier's predictions are (with respect to human classification)
 
-With penalty:
-$$\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j) - \mathbbm{1}_B(w_j)$$
-
-No penalty:
-$$\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j)$$
-where $A$ is the set of words that the classifier associated with the correct class according to LIME for tweet $i$, $B$ is the set of words that the classifier associated with the wrong class according to LIME for tweet $i$, there are $T_i$ words in tweet $i$, and there are $N$ tweets.
+$$\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_{A_i}(w_j)$$
+where there are $T_i$ table 1 words in tweet $i$, $w_j$ is the $j^{th}$ table 1 word in tweet $i$, $A_i$ is the set of words that the classifier associated with the unreliable class according to LIME for tweet $i$, and there are $N$ tweets.
 
 ## Results
 \begin{table}
@@ -155,36 +151,26 @@ OCSVM used word embeddings of length 100; isolation forest and LOF used embeddin
 \end{table}
 
 ## Results (continued)
+Two experiments: (1) used strictly table 1 words, and (2) used table 1 words plus related terms. Both used stemming.
+
 \begin{table}
  \caption{Binary SVM explainability}
   \centering
   \begin{tabular}{|c|c|c|}
     \hline
-    \textbf{Experiment} & \textbf{Penalty} & \textbf{No Penalty} \\
+    \textbf{Experiment} & \textbf{Explainability Score} \\
     \hline
-    1: Correctly predicted & 0.331 & 0.534 \\
+    1: Correctly predicted & 0.593 \\
     \hline
-    1: Wrongly predicted & 0.222 & 0.278 \\
+    1: Wrongly predicted & 0.500 \\
     \hline
-    1: Aggregated & 0.326 & 0.521 \\
+    1: Aggregated & 0.588 \\
     \hline
-    2: Correctly predicted & 0.356 & 0.593 \\
+    2: Correctly predicted & 0.619 \\
     \hline
-    2: Wrongly predicted & 0.074 & 0.315 \\
+    2: Wrongly predicted & 0.407 \\
     \hline
-    2: Aggregated & 0.342 & 0.579 \\
-    \hline
-    3a: Correctly predicted & 0.396 & 0.593 \\
-    \hline
-    3a: Wrongly predicted & 0.444 & 0.500 \\
-    \hline
-    3a: Aggregated & 0.399 & 0.588 \\
-    \hline
-    3b: Correctly predicted & 0.378 & 0.619 \\
-    \hline
-    3b: Wrongly predicted & 0.148 & 0.407 \\
-    \hline
-    3b: Aggregated & 0.367 & 0.608 \\
+    2: Aggregated & 0.608 \\
     \hline
   \end{tabular}
   \label{tab:expl}
