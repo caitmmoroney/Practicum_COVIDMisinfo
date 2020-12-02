@@ -130,62 +130,16 @@ variables, classification, and evaluation of explainability.
 \hypertarget{nlp-featurization}{%
 \subsection{NLP featurization}\label{nlp-featurization}}
 
-In order to obtain features from the raw tweet text, we first employed
+In order to obtain features from the raw tweet text, we first employ
 standard preprocessing, to include removing stop words and some
-punctuation as well as lemmatizing words. Specifically, we removed
-special characters which were not punctuation (e.g., parentheses,
+punctuation as well as lemmatizing words. Specifically, we remove
+special characters which are not punctuation (e.g., parentheses,
 question marks, exclamation points, periods, commas, hyphens, colons,
 and semicolons) or alphanumeric characters (i.e., letters or numbers),
-converted all text to lowercase, removed stop words, and lemmatized
-words using NLTK's WordNetLemmatizer aided by NLTK's part-of-speech
-tagger. After preprocessing, the two approaches we pursued involved (1)
-Bag-of-Words and (2) word embeddings, each followed by latent variable
-methods.
-
-\hypertarget{bag-of-words}{%
-\subsubsection{Bag-of-Words}\label{bag-of-words}}
-
-A standard NLP featurization method is the Bag-of-Words model. This
-method can be described as quantifying textual data by representing each
-document in a dataset with a set of features which derive from the set
-of words used across all of the documents (Salton and McGill 1983). In
-other words, we create a dictionary from the unique terms used in a set
-of documents, and each word in the dictionary is associated with a
-feature in a matrix of documents (rows) by terms (columns). There are
-generally two methods for obtaining cell values for the document-term
-matrix, \(\mathbf{X}\): binary indexing and weighted indexing (Salton
-and McGill 1983).
-
-Binary indexing consists of scanning each document for the presence of
-each word in the dictionary. For the \(i^{th}\) document, if term \(j\)
-appears at least once in the document, cell \(\mathbf{X}_{ij} = 1\);
-otherwise, \(\mathbf{X}_{ij} = 0\).
-
-Weighted indexing, on the other hand, accounts for the frequency of
-terms (Salton and McGill 1983). The most basic implementation of
-weighted indexing is count vectorization: for the \(i^{th}\) document,
-\(\mathbf{X}_{ij}\) is equal to the number of times term \(j\) appears
-in the document. The corresponding formula is as follows:
-\[\mathbf{X}_{ij} = \sum_{l=1}^{T_i}{\mathbbm{1}_{w_l = w_j}}\] where
-\(w_j\) is the term corresponding to column \(j\) in the document-term
-matrix, \(w_l\) is the \(l^{th}\) word in tweet \(i\), and there are
-\(T_i\) words in tweet \(i\). We refer to this method as the term
-frequency, or TF, method. Another common weighting scheme, term
-frequency-inverse document frequency (often referred to as TF-IDF),
-consists of a transformation on the TF Bag-of-Words matrix. We divide by
-the document frequency, which is the total number of documents in the
-dataset in which term \(j\) appears (Salton and McGill 1983). This can
-be represented as the following formula:
-\[\mathbf{X}_{ij} = \frac {\sum_{l=1}^{T_i}{\mathbbm{1}_{w_l = w_j}}} {\sum_{k=1}^{N}{\mathbbm{1}_{w_j \in C_k}}}\]
-where the only new term, \(C_k\), is the set of words that appear in
-document \(k\).
-
-After constructing the Bag-of-Words matrix, we employ topic modeling to
-reduce the dimensionality of the \(N\)x\(p\) matrix. This process is
-discussed in more detail below (see Section \ref{sec:LVpipe}).
-
-\hypertarget{word-embeddings}{%
-\subsubsection{Word embeddings}\label{word-embeddings}}
+convert all text to lowercase, remove stop words, and lemmatize words
+using NLTK's WordNetLemmatizer aided by NLTK's part-of-speech tagger.
+After preprocessing, we create word embeddings via the word-word
+co-occurrence matrix followed by latent variable methods.
 
 \begin{quote}
 ``You shall know a word by the company it keeps!''
@@ -197,27 +151,23 @@ To create word embeddings, we obtain sparse vector representations which
 are subsequently transformed into dense vector representations via
 matrix decomposition. To first construct sparse vector representations,
 we use the word-word co-occurrence matrix (also known as the
-word-context matrix) which, unlike the Bag-of-Words method, is able to
-incorporate information about context from the raw text data. ``In the
-study of selected words, \ldots{} an exhaustive collection of
-collocations must first be made. It will then be found that meaning by
-collocation will suggest a small number of groups of collocations for
-each word studied'' (Firth 1957). We train the embeddings on the full
-set of 560 tweets. With the Bag-of-Words methods, we are able to encode
-information about words' presence in a given document; the co-occurrence
-approach improves upon this by allowing us to look at word usage with
-respect to the presence of other words. We construct a word-context
-matrix using the entire vocabulary for both target terms and context
-terms. In other words, the matrix is symmetric. We incorporate a number
-of hyperparameters related to the construction and subsequent
-transformation of this matrix, including context window size, the use of
-raw counts or variations on the Pointwise Mutual Information (PMI), and
-Laplace smoothing. We also include ``\textless START\textgreater{}'' and
-``\textless END\textgreater{}'' tokens at the beginning and end of each
-tweet.
+word-context matrix) which is able to incorporate information about
+context from the raw text data. ``In the study of selected words,
+\ldots{} an exhaustive collection of collocations must first be made. It
+will then be found that meaning by collocation will suggest a small
+number of groups of collocations for each word studied'' (Firth 1957).
+We construct a word-context matrix using the entire vocabulary for both
+target terms and context terms. In other words, the matrix is symmetric.
+We incorporate a number of hyperparameters related to the construction
+and subsequent transformation of this matrix, including context window
+size, the use of raw counts or variations on the Pointwise Mutual
+Information (PMI), and Laplace smoothing. We also include
+``\textless START\textgreater{}'' and ``\textless END\textgreater{}''
+tokens at the beginning and end of each tweet. We train the embeddings
+on the full set of 560 tweets.
 
 \hypertarget{context-window-size}{%
-\paragraph{Context window size}\label{context-window-size}}
+\subsubsection{Context window size}\label{context-window-size}}
 
 Window size refers to the number of tokens before and after a given
 target word that are considered context words. For example, a window
@@ -248,7 +198,7 @@ appears to capture more relevant information; consequently, we selected
 a window size of 15 for our experiments.
 
 \hypertarget{weighting}{%
-\paragraph{Weighting}\label{weighting}}
+\subsubsection{Weighting}\label{weighting}}
 
 In constructing the word-word co-occurrence matrix \(\mathbf{X}\), our
 goal is to encode contextual information into our representations of
@@ -307,7 +257,7 @@ information metrics surpassed the raw counts approach. Therefore, our
 final ICA word embeddings were formed using PMI\textsubscript{0}.
 
 \hypertarget{laplace-smoothing}{%
-\paragraph{Laplace smoothing}\label{laplace-smoothing}}
+\subsubsection{Laplace smoothing}\label{laplace-smoothing}}
 
 One approach to the problem of unobserved word-context pairs resulting
 in an ill-defined word-context matrix when using PMI consists of
@@ -321,9 +271,9 @@ is common to use add-1 or add-2 Laplace smoothing in NLP applications
 add-2 smoothing. Our results suggest that no smoothing produced better
 embeddings than incorporating Laplace smoothing.
 
-\hypertarget{shifted-vs-unshifted-pmi-or-ppmi}{%
-\paragraph{Shifted vs unshifted PMI (or
-PPMI)}\label{shifted-vs-unshifted-pmi-or-ppmi}}
+\hypertarget{shifted-pmi-spmi-and-shifted-ppmi-sppmi}{%
+\subsubsection{Shifted PMI (SPMI) and shifted PPMI
+(SPPMI)}\label{shifted-pmi-spmi-and-shifted-ppmi-sppmi}}
 
 Levy and Goldberg (2014) propose a novel word association metric based
 on their investigation of the Skip-Gram with Negative Sampling (SGNS)
@@ -334,8 +284,8 @@ Goldberg 2014). We compared PPMI, SPPMI, PMI\textsubscript{0}, and
 SPMI\textsubscript{0}. We found that unshifted PMI\textsubscript{0}
 produced the best embeddings from our set of 560 tweets.
 
-\hypertarget{use-of-start-end-tokens}{%
-\paragraph{Use of start \& end tokens}\label{use-of-start-end-tokens}}
+\hypertarget{start-and-end-tokens}{%
+\subsubsection{Start and end tokens}\label{start-and-end-tokens}}
 
 We add ``\textless START\textgreater{}'' and
 ``\textless END\textgreater{}'' tokens to the beginning and end of each
@@ -361,12 +311,6 @@ there are \(T_i\) words in tweet \(i\). Note that in our experiments
 For more details on the performance of different word embedding
 hyperparameter combinations, see the Appendix.
 
-\begin{itemize}
-\tightlist
-\item
-  BERT embeddings from pre-trained model
-\end{itemize}
-
 \hypertarget{latent-variable-methods}{%
 \subsection{Latent variable methods}\label{latent-variable-methods}}
 
@@ -374,8 +318,7 @@ In order to reduce the dimensionality of the data matrix \(\mathbf{X}\),
 we employ latent variable methods. Specifically, we follow the
 methodology presented in Honkela, Hyvärinen, and Väyrynen (2010): we
 apply Principal Component Analysis (PCA) followed by Independent
-Component Analysis (ICA) to both the Bag-of-Words matrix and the
-word-context co-occurrence matrix.
+Component Analysis (ICA) to the word-word co-occurrence matrix.
 
 \hypertarget{dimensionality-reduction}{%
 \subsubsection{Dimensionality
@@ -438,44 +381,27 @@ contains the ICA features. This process is represented visually in
 Figure \ref{fig:matdec}. We use the estimated \(\mathbf{\hat{A}}\)
 matrix as the input to our classification models.
 
-The only difference between the topic modeling approach and the word
-embedding approach is the structure of the original data matrix
-\(\mathbf{X}\) obtained from the chosen NLP featurization method. In one
-case, we obtain vector representations for documents; in the other, we
-obtain vector representations for terms.
-
-For topic modeling, we start with a documents by terms matrix and
-perform dimensionality reduction via truncated SVD in order to obtain
-\(k\) latent variables. These SVD features are linear combinations of
-the original columns of the Bag-of-Words matrix, which are terms. In
-other words, each latent variable is a topic, comprised of a linear
-combination of words which can be ranked by their weights from the
-estimated \(\mathbf{\hat{V}}\) matrix. We subsequently apply ICA to the
-estimated \(\mathbf{\hat{U}}\) matrix, containing the SVD features, in
-order to obtain the \(k\) independent components. The resulting ICA
-features are linear combinations of SVD features.
-
-When we start with the word-context matrix, we obtain word embeddings
+Starting with the word-context matrix, we obtain word embeddings
 comprised of latent variables after first performing truncated SVD.
 These SVD features are linear combinations of the context words taken
 from the original co-occurrence matrix. However, we go a step further in
 order to obtain statistically independent latent variables by applying
-ICA to the estimated \(\mathbf{\hat{U}}\) matrix. This allows us to
-obtain ICA word embeddings from the \(\mathbf{\hat{A}}\) matrix, whose
-columns are linear combinations of the SVD features. The estimated
+ICA to the \(\mathbf{\hat{U}}\) matrix. This allows us to obtain ICA
+word embeddings from the \(\mathbf{\hat{A}}\) matrix, whose columns are
+linear combinations of the SVD features. The estimated
 \(\mathbf{\hat{S}}\) matrix allows us to access the weights for these
 linear combinations.
 
 \begin{figure}
   \centering
-  \matbox{5}{7}{n}{m}{X} = 
-  \matbox{5}{3}{n}{k}{U} \raiserows{1}{\matbox{3}{3}{k}{k}{\Sigma}}
-  \raiserows{1}{\matbox{3}{7}{k}{m}{V^T}}
+  \matbox{7}{7}{n}{n}{X} = 
+  \matbox{7}{4}{n}{k}{U} \raiserows{1.5}{\matbox{4}{4}{k}{k}{\Sigma}}
+  \raiserows{1.5}{\matbox{4}{7}{k}{n}{V^T}}
   \newline
   \newline
   \newline
-  \matbox{5}{3}{n}{k}{U} = 
-  \matbox{5}{3}{n}{p}{A} \raiserows{1}{\matbox{3}{3}{p}{k}{S}}
+  \matbox{7}{4}{n}{k}{U} = 
+  \matbox{7}{4}{n}{k}{A} \raiserows{1.5}{\matbox{4}{4}{k}{k}{S}}
   \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
   \label{fig:matdec}
 \end{figure}
@@ -505,21 +431,16 @@ binary SVM.
 \subsection{Evaluation}\label{evaluation}}
 
 In order to evaluate our experiments, including featurization methods
-and classification algorithms, we have identified three areas for
-comparison: performance, computational complexity, and explainability.
-To measure performance, we employ the standard suite of evaluation
-metrics, i.e., accuracy, F-score, precision, recall, and ROC-AUC. We
-report the macro-averaged versions of these scores. Computational
-complexity is easily captured by the amount of time taken for training
-and testing. Evaluating the explainability of one method versus another
-proves to be a more complicated task. For the experiments using word
-embeddings obtained from the pretrained BERT model, we use LIME
-(Ribeiro, Singh, and Guestrin 2016) to obtain local explanations for
-tweet predictions. For the ICA word embeddings, we propose a new
-framework to obtain global and local explanations for tweet predictions
-which derive from the ICA matrix decomposition. In order to then compare
-overall explainability for one method versus another, we have devised a
-metric which captures information from the LIME and ICA local
+and classification algorithms, we have identified two areas for
+comparison: performance and explainability. To measure performance, we
+employ the standard suite of evaluation metrics, i.e., accuracy,
+F-score, precision, recall, and ROC-AUC. We report the macro-averaged
+versions of these scores. Evaluating the explainability of one method
+versus another proves to be a more complicated task. For the ICA word
+embeddings, we propose a new framework to obtain global explanations for
+tweet predictions which derive from the ICA matrix decomposition. In
+order to then compare overall explainability for one method versus
+another, we have devised a metric which captures information from local
 explanations and aggregates these values to produce a single number
 representing an explainability score. This allows us to compare two
 methods with respect to explainability in the same way that we might
@@ -543,17 +464,17 @@ et al. (2020). This table has been reproduced in the appendix (see Table
 \subsubsection{Explainability tools}\label{explainability-tools}}
 
 In order to assess the explainability of our word embedding plus
-classifier pipeline, we first turned to LIME (Ribeiro, Singh, and
-Guestrin 2016), a popular explainability model which produces local
-explanations for classifier decisions. In the context of an NLP
-classification task, LIME attempts to provide an accurate explanation
-for why the classifier in question made a classification decision for a
-given document based on the featurization method used. For this study,
-we can apply LIME to obtain an explanation for why the SVM classifier
-classified a given tweet as unreliable based on the words which appear
-in that tweet; LIME can tell us which class the classifier associates
-each word with, as well as the relative importance of each word in the
-machine's decision-making process for that tweet.
+classifier pipeline, we first turn to LIME (Ribeiro, Singh, and Guestrin
+2016), a popular explainability model which produces local explanations
+for classifier decisions. In the context of an NLP classification task,
+LIME attempts to provide an accurate explanation for why the classifier
+in question made a classification decision for a given document based on
+the featurization method used. For this study, we can apply LIME to
+obtain an explanation for why the SVM classifier classified a given
+tweet as unreliable based on the words which appear in that tweet; LIME
+can tell us which class the classifier associates each word with, as
+well as the relative importance of each word in the machine's
+decision-making process for that tweet.
 
 While LIME is a brilliant tool for assessing explainability and
 classifier trustworthiness (Ribeiro, Singh, and Guestrin 2016), we
@@ -592,12 +513,6 @@ unsupervised methods, so our word importance weights do not have any
 class association, whereas LIME provides both importance magnitude and
 sign (signifying class association).
 
-\hypertarget{global}{%
-\paragraph{Global}\label{global}}
-
-\hypertarget{local}{%
-\paragraph{Local}\label{local}}
-
 \hypertarget{explainability-metric}{%
 \subsubsection{Explainability metric}\label{explainability-metric}}
 
@@ -606,20 +521,19 @@ was to provide an evaluation metric which would allow us to compare the
 overall explainability of one model and featurization method with that
 of another. The final result of this effort is a novel metric which
 allows us to incorporate the LIME (Ribeiro, Singh, and Guestrin 2016)
-and ICA explainability output into a single score which represents the
-overall explainability as an aggregation of local explanations.
+explainability output into a single score which represents the overall
+explainability as an aggregation of local explanations.
 
 Because our conception of explainability inherently relies on a
 comparison to human decision-making, our explainability metric takes an
 input which captures the rules our coders used to label our set of
 tweets. This input is in the form of a vocabulary list which comprises
 words that fall under the rules in Table 1 from Boukouvalas et al.
-(2020).\footnote{The vocabulary list we used can be found in the
-  Appendix \ref{sec:appendix}.} Our metric ``rewards'' the word
-embedding and algorithm pipeline for associating Table 1 words with the
-unreliable class. We produced two versions of the metric, one which
-penalizes the machine for associating Table 1 words with the reliable
-class, and one which does not include a penalty.
+(2020). Our metric ``rewards'' the word embedding and algorithm pipeline
+for associating Table 1 words with the unreliable class. We produced two
+versions of the metric, one which penalizes the machine for associating
+Table 1 words with the reliable class, and one which does not include a
+penalty.
 
 The formula which includes the penalty is as follows:
 \[\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j) - \mathbbm{1}_B(w_j)\]
@@ -640,34 +554,6 @@ correct class according to the LIME output for tweet \(i\), there are
 of the metric essentially computes the percentage of Table 1 word
 occurrences that were correctly associated with the unreliable class per
 tweet and then computes an unweighted average over all of the tweets.
-
-\hypertarget{results}{%
-\section{Results}\label{results}}
-
-\label{sec:results} Below we have included the results for both
-one-class classification and binary classification experiments. We
-report the standard performance evaluation metrics for three outlier
-detection models and one binary classification model. For our novel
-explainability metric, we report results for the binary classification
-set-up.
-
-\hypertarget{performance}{%
-\subsection{Performance}\label{performance}}
-
-To assess performance, we report the macro-averaged ROC-AUC, accuracy,
-F\textsubscript{1}-score, precision, and recall values.\footnote{For
-  non-macro-averaged binary classification results, see Table
-  \ref{tab:svm_nomacro}} Overall, the binary classification experiment
-had much greater success than any of the three one-class classification
-models.
-
-\hypertarget{one-class-classification}{%
-\subsubsection{One-class
-classification}\label{one-class-classification}}
-
-For one-class classification, we compared the performance of three
-models: one-class SVM (OCSVM), isolation forest, and local outlier
-factor (LOF).
 
 \begin{table}
  \caption{OCSVM Results}
@@ -692,6 +578,16 @@ factor (LOF).
   \label{tab:ocsvm}
 \end{table}
 
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+\label{sec:results} Below we have included the results for both
+one-class classification and binary classification experiments. We
+report the standard performance evaluation metrics for three outlier
+detection models and one binary classification model. For our novel
+explainability metric, we report results for the binary classification
+set-up.
+
 \begin{table}
  \caption{Isolation Forest Results}
   \centering
@@ -715,6 +611,16 @@ factor (LOF).
   \label{tab:iforest}
 \end{table}
 
+\hypertarget{performance}{%
+\subsection{Performance}\label{performance}}
+
+To assess performance, we report the macro-averaged ROC-AUC, accuracy,
+F\textsubscript{1}-score, precision, and recall values.\footnote{For
+  non-macro-averaged binary classification results, see Table
+  \ref{tab:svm_nomacro}} Overall, the binary classification experiment
+had much greater success than any of the three one-class classification
+models.
+
 \begin{table}
  \caption{LOF Results}
   \centering
@@ -737,6 +643,14 @@ factor (LOF).
   \end{tabular}
   \label{tab:lof}
 \end{table}
+
+\hypertarget{one-class-classification}{%
+\subsubsection{One-class
+classification}\label{one-class-classification}}
+
+For one-class classification, we compared the performance of three
+models: one-class SVM (OCSVM), isolation forest, and local outlier
+factor (LOF).
 
 \hypertarget{binary-classification}{%
 \subsubsection{Binary classification}\label{binary-classification}}
@@ -769,6 +683,8 @@ experiment.
 
 \hypertarget{explainability}{%
 \subsection{Explainability}\label{explainability}}
+
+INSERT EXPLAINABILITY RESULTS HERE.
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
@@ -865,11 +781,6 @@ Ribeiro, Marco Tulio, Sameer Singh, and Carlos Guestrin. 2016. ``"Why
 Should I Trust You?": Explaining the Predictions of Any Classifier.''
 \emph{arXiv:1602.04938 {[}Cs, Stat{]}}, August.
 \url{http://arxiv.org/abs/1602.04938}.
-
-\leavevmode\hypertarget{ref-salton_introduction_1983}{}%
-Salton, Gerard, and Michael J. McGill. 1983. \emph{Introduction to
-Modern Information Retrieval}. McGraw-Hill Computer Science Series. New
-York: McGraw-Hill.
 
 \newpage
 
