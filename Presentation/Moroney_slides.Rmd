@@ -52,7 +52,7 @@ knitr::opts_chunk$set(echo = FALSE)
 - classification
 - evaluation
 
-## Word-Word Co-Occurrence Matrix
+## Word-Word Co-occurrence Matrix
 
 - text cleaning: **remove stop words, lemmatize text, convert to lowercase, remove special characters**, remove punctuation
 - context window size: 1, 2, 4, 6, 10, **15**, 20
@@ -77,7 +77,10 @@ knitr::opts_chunk$set(echo = FALSE)
 \end{figure}
 
 ## Tweet Embeddings
+A tweet embedding is the average of the word embeddings for the words that occur in that tweet.
 $$\mathbf{v}_i=\frac {1} {T_i} \sum_{j=1}^{T_i}{\mathbf{e}_j}$$
+Example tweet: "Covid is fake news."
+$$\mathrm{tweet} \begin{bmatrix} v_{i1} \\ \vdots \\ v_{ik} \end{bmatrix} = \frac {\mathrm{covid} \begin{bmatrix} e_{11} \\ \vdots \\ e_{1k} \end{bmatrix} + \mathrm{is} \begin{bmatrix} e_{21} \\ \vdots \\ e_{2k} \end{bmatrix} + \mathrm{fake} \begin{bmatrix} e_{31} \\ \vdots \\ e_{3k} \end{bmatrix} + \mathrm{news} \begin{bmatrix} e_{41} \\ \vdots \\ e_{4k} \end{bmatrix}} {4}$$
 
 ## Classification
 
@@ -187,10 +190,10 @@ OCSVM used word embeddings of length 100; isolation forest and LOF used embeddin
   \label{tab:expl}
 \end{table}
 
-## Conclusion
-Future work:
+## Future work
 
 - local ICA explainability
 - different word embeddings (e.g., BERT)
 - different classifiers (e.g., neural net)
+- improve explainability metric
 
