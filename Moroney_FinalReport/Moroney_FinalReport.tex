@@ -62,32 +62,34 @@ Insert introduction text here.
 \tightlist
 \item
   Misinformation is a big problem, especially on Twitter \& social media
-\item
-  Misinformation: unreliable vs reliable tweets
-\item
-  Dataset: 560 tweets manually labeled as unreliable or not unreliable
-  (refer to this class as reliable)
+\end{itemize}
 
-  \begin{itemize}
-  \tightlist
-  \item
-    originally collected sample of 282,201 Twitter users from Canada,
-    balanced for race, gender, and age by using Conditional Independence
-    Coupling (CIC)
-  \item
-    tweets were posted between January 1, 2020 and March 13, 2020
-  \item
-    randomly undersampled 1,600 tweets with goal of creating balanced
-    reliable/unreliable dataset
-  \item
-    two experts reviewed tweets against set of rules (link to table in
-    appendix); obtained 280 unreliable tweets
-  \item
-    randomly undersampled the reliable class in order to have perfectly
-    balanced dataset of 560 tweets total
-  \end{itemize}
+In this study, we use ``unreliable'' to refer to tweets labeled as
+misinformation and ``reliable'' to refer to tweets which do not contain
+misinformation. The data as well as the labeling rules come from
+Boukouvalas et al. (2020); the authors manually labeled 560 tweets as
+unreliable or reliable. The tweets were collected from a sample of
+282,201 Twitter users in Canada between the dates January 1, 2020 and
+March 13, 2020. The dataset is balanced for race, gender, and age via
+Conditional Independence Coupling (CIC) (Boukouvalas et al. 2020).
+
+\begin{itemize}
+\tightlist
 \item
-  Topic modeling
+  randomly undersampled 1,600 tweets with goal of creating balanced
+  reliable/unreliable dataset
+\item
+  two experts reviewed tweets against set of rules (link to table in
+  appendix); obtained 280 unreliable tweets
+\item
+  randomly undersampled the reliable class in order to have perfectly
+  balanced dataset of 560 tweets total
+\end{itemize}
+
+EXPLAIN THE REST OF THE PROCESS BRIEFLY HERE.
+
+\begin{itemize}
+\tightlist
 \item
   Word embeddings
 \item
@@ -684,7 +686,56 @@ experiment.
 \hypertarget{explainability}{%
 \subsection{Explainability}\label{explainability}}
 
-INSERT EXPLAINABILITY RESULTS HERE.
+INSERT LIME \& ICA EXPLAINABILITY RESULTS HERE (example tweet).
+
+INSERT EXPLANATION OF EXPERIMENTS \& STEMMING, ETC. HERE.
+
+\begin{itemize}
+\tightlist
+\item
+  Experiment 1: Only table 1 words
+\item
+  Experiment 2: Table 1 words plus manual additions
+\item
+  Experiment 3a: Stemming on table 1 words
+\item
+  Experiment 3b: Stemming on table 1 words plus manual additions
+\end{itemize}
+
+\begin{table}
+ \caption{Explainability Scores}
+  \centering
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \rowcolor{lightgray} \textbf{Experiment} & \textbf{Penalty} & \textbf{No Penalty} \\
+    \hline
+    1: Correctly predicted & 0.331 & 0.534 \\
+    \hline
+    1: Wrongly predicted & 0.222 & 0.278 \\
+    \hline
+    1: Aggregated & 0.326 & 0.521 \\
+    \hline
+    2: Correctly predicted & 0.356 & 0.593 \\
+    \hline
+    2: Wrongly predicted & 0.074 & 0.315 \\
+    \hline
+    2: Aggregated & 0.342 & 0.579 \\
+    \hline
+    3a: Correctly predicted & \cellcolor{green} 0.396 & 0.593 \\
+    \hline
+    3a: Wrongly predicted & \cellcolor{green} 0.444 & \cellcolor{green} 0.500 \\
+    \hline
+    3a: Aggregated & \cellcolor{green} 0.399 & 0.588 \\
+    \hline
+    3b: Correctly predicted & 0.378 & \cellcolor{green} 0.619 \\
+    \hline
+    3b: Wrongly predicted & 0.148 & 0.407 \\
+    \hline
+    3b: Aggregated & 0.367 & \cellcolor{green} 0.608 \\
+    \hline
+  \end{tabular}
+  \label{tab:expl}
+\end{table}
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
