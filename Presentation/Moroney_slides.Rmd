@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## 
-![Twitter adds warning labels to tweets.](./twitter_misinfo_1.jpg)
+![Twitter [adds warning labels to tweets.](https://blog.twitter.com/en_us/topics/product/2020/updating-our-approach-to-misleading-information.html)](./twitter_misinfo_1.jpg)
 
 ##
 ![Twitter removes misleading content.](./twitter_misinfo_2.jpg)
@@ -58,14 +58,8 @@ knitr::opts_chunk$set(echo = FALSE)
 - classification
 - evaluation
 
-## Word-Word Co-occurrence Matrix
-
-- text cleaning: **remove stop words, lemmatize text, convert to lowercase, remove special characters**, remove punctuation
-- context window size: 1, 2, 4, 6, 10, **15**, 20
-- weighting: raw frequencies, **PMI**, PPMI
-- Laplace smoothing: add-1, add-2
-- shifted or **unshifted**: k = 5, **k = 1**
-- **start/end tokens**
+## Word-Context Matrix
+![Example of a word-context matrix from [Towards Data Science](https://towardsdatascience.com/word-to-vectors-natural-language-processing-b253dd0b0817)](./word_context_matrix.png){#id .class width=70% height=70%}
 
 ## Latent Variable Methods
 \begin{figure}
@@ -80,12 +74,6 @@ A tweet embedding is the average of the word embeddings for the words that occur
 $$\mathbf{v}_i=\frac {1} {T_i} \sum_{j=1}^{T_i}{\mathbf{s}_j}$$
 Example tweet: "Covid is fake news."
 $$\mathrm{tweet} \begin{bmatrix} v_{i1} \\ \vdots \\ v_{ik} \end{bmatrix} = \frac {\mathrm{covid} \begin{bmatrix} s_{11} \\ \vdots \\ s_{1k} \end{bmatrix} + \mathrm{is} \begin{bmatrix} s_{21} \\ \vdots \\ s_{2k} \end{bmatrix} + \mathrm{fake} \begin{bmatrix} s_{31} \\ \vdots \\ s_{3k} \end{bmatrix} + \mathrm{news} \begin{bmatrix} s_{41} \\ \vdots \\ s_{4k} \end{bmatrix}} {4}$$
-
-## Classification
-
-- One-class classification: one-class support vector machines (OCSVM), isolation forest, & local outlier factor (LOF)
-- Binary classification: SVM
-- Evaluation: performance & explainability
 
 ## LIME: Local Explainability
 ![LIME output for unreliable tweet.](./LIME_output.png)
