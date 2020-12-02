@@ -4,6 +4,7 @@ author: "Caitlin Moroney"
 date: "12/2/2020"
 output:
   beamer_presentation:
+    theme: "CambridgeUS"
     includes:
       in_header:
         - present.sty
@@ -95,8 +96,8 @@ We define the importance of the $i^{th}$ target word as follows:
 $$g_i = \frac {1}{k} \sum_{j=1}^{k}{|a_{ij}|}$$
 where $k$ is the number of SVD features (and therefore the number of ICA features), and $|a_{ij|}$ is the magnitude of the $i^{th}$ word's importance in topic $j$.
 
-## Example
-Tweet 170: CNBC ADVICE NOW: Coronavirus is the flu. Wash your hands. Book a vacation. We’ll look back on this and laugh.
+## Example: Tweet 170
+CNBC ADVICE NOW: Coronavirus is the flu. Wash your hands. Book a vacation. We’ll look back on this and laugh.
 
 ![Comparing LIME and ICA explainability.](./tweet170_plots.png){#id .class width=75% height=75%}
 
@@ -108,7 +109,7 @@ $$\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j) -
 
 No penalty:
 $$\frac{1}{N} \sum_{i=1}^{N} \frac{1}{T_i} \sum_{j=1}^{T_i} \mathbbm{1}_A(w_j)$$
-where $A$ is the set of words that the classifier associated with the correct class (e.g., tweet $i$ is labeled as “reliable,” and the classifier classified the tweet as “reliable”) according to the LIME output for tweet $i$, $B$ is the set of words that the classifier associated with the wrong class according to the LIME output for tweet $i$, there are $T_i$ words in tweet $i$, and there are $N$ tweets.
+where $A$ is the set of words that the classifier associated with the correct class according to LIME for tweet $i$, $B$ is the set of words that the classifier associated with the wrong class according to LIME for tweet $i$, there are $T_i$ words in tweet $i$, and there are $N$ tweets.
 
 ## Results
 \begin{table}
