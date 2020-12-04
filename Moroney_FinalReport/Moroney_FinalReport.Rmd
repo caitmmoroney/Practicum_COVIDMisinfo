@@ -120,8 +120,22 @@ Starting with the word-context matrix, we obtain word embeddings comprised of la
   \newline
   \newline
   \newline
-  \matbox{7}{4}{n}{k}{U} = 
-  \matbox{7}{4}{n}{k}{A} \raiserows{1.5}{\matbox{4}{4}{k}{k}{S}}
+  \matbox{7}{7}{n}{n}{X} \matbox{7}{4}{n}{k}{U} = \matbox{7}{4}{n}{k}{\widetilde{X}}
+  \newline
+  \newline
+  \newline
+  {\matbox{4}{7}{k}{n}{\widetilde{X}^T}} = 
+  \matbox{4}{4}{k}{k}{W} \matbox{4}{7}{k}{n}{\hat{S}}
+  \newline
+  \newline
+  \newline
+  \matbox{7}{7}{n}{n}{X} = 
+  \matbox{7}{4}{n}{k}{A} \raiserows{1.5}{\matbox{4}{4}{k}{n}{S}}
+  \newline
+  \newline
+  \newline
+  \matbox{7}{4}{n}{k}{\hat{A}} = 
+  \matbox{7}{4}{n}{k}{U^{\dagger}} \raiserows{1.5}{\matbox{4}{4}{k}{k}{W^{-1}}}
   \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
   \label{fig:matdec}
 \end{figure}
