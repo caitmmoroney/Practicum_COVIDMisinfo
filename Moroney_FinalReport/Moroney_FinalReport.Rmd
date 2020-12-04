@@ -235,10 +235,10 @@ To assess performance, we report the macro-averaged ROC-AUC, accuracy, F\textsub
 \end{table}
 
 ### One-class classification
-For one-class classification, we compared the performance of three models: one-class SVM (OCSVM), isolation forest, and local outlier factor (LOF).
+For one-class classification, we compared the performance of three models: one-class SVM (OCSVM), isolation forest, and local outlier factor (LOF). OCSVM appears to outperform both isolation forest and local outlier factor across all metrics. The three outlier detection models performed best on word embeddings with fewer dimensions compared to the binary classification model. OCSVM performed best on embeddings with a length of 100, whereas LOF and isolation forest had optimal results with embeddings of length 50.
 
 ### Binary classification
-For binary classification, we show results for our binary SVM experiment.
+For binary classification, we show results for our binary SVM experiment. The embeddings of length 250 appear to have resulted in the best classification performance with regard to every metric except AUC (though the AUC performance is comparable across all embeddings). Compared to the outlier detection models, binary SVM performed best on longer word embeddings of size 250. The accuracy for binary SVM, 0.807, improved upon the best accuracy performance from all of our one-class model experiments, which was 0.671, by over 13 percentage points.
 
 \begin{table}
  \caption{Binary SVM Results}
