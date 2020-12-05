@@ -317,6 +317,34 @@ methodology presented in Honkela, Hyvärinen, and Väyrynen (2010): we
 apply Principal Component Analysis (PCA) followed by Independent
 Component Analysis (ICA) to the word-word co-occurrence matrix.
 
+\begin{figure}
+  \centering
+  \matbox{7}{7}{n}{n}{X} = 
+  \matbox{7}{4}{n}{k}{U} \raiserows{1.5}{\matbox{4}{4}{k}{k}{\Sigma}}
+  \raiserows{1.5}{\matbox{4}{7}{k}{n}{V^T}}
+  \newline
+  \newline
+  \newline
+  \matbox{7}{7}{n}{n}{X} \matbox{7}{4}{n}{k}{U} = \matbox{7}{4}{n}{k}{\widetilde{X}}
+  \newline
+  \newline
+  \newline
+  {\matbox{4}{7}{k}{n}{\widetilde{X}^T}} = 
+  \matbox{4}{4}{k}{k}{W} \matbox{4}{7}{k}{n}{\hat{S}}
+  \newline
+  \newline
+  \newline
+  \matbox{7}{7}{n}{n}{X} = 
+  \matbox{7}{4}{n}{k}{A} \raiserows{1.5}{\matbox{4}{4}{k}{n}{S}}
+  \newline
+  \newline
+  \newline
+  \matbox{7}{4}{n}{k}{\hat{A}} = 
+  \matbox{7}{4}{n}{k}{U^{\dagger}} \raiserows{1.5}{\matbox{4}{4}{k}{k}{W^{-1}}}
+  \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
+  \label{fig:matdec}
+\end{figure}
+
 \hypertarget{dimensionality-reduction}{%
 \subsubsection{Dimensionality
 reduction}\label{dimensionality-reduction}}
@@ -366,34 +394,6 @@ decomposition, we obtain a mixing matrix, \(\mathbf{S}\), which contains
 the weights for each of the independent components which together
 comprise each of the observed variables, and \(\mathbf{A}\), where each
 column is a latent variable (or independent component).
-
-\begin{figure}
-  \centering
-  \matbox{7}{7}{n}{n}{X} = 
-  \matbox{7}{4}{n}{k}{U} \raiserows{1.5}{\matbox{4}{4}{k}{k}{\Sigma}}
-  \raiserows{1.5}{\matbox{4}{7}{k}{n}{V^T}}
-  \newline
-  \newline
-  \newline
-  \matbox{7}{7}{n}{n}{X} \matbox{7}{4}{n}{k}{U} = \matbox{7}{4}{n}{k}{\widetilde{X}}
-  \newline
-  \newline
-  \newline
-  {\matbox{4}{7}{k}{n}{\widetilde{X}^T}} = 
-  \matbox{4}{4}{k}{k}{W} \matbox{4}{7}{k}{n}{\hat{S}}
-  \newline
-  \newline
-  \newline
-  \matbox{7}{7}{n}{n}{X} = 
-  \matbox{7}{4}{n}{k}{A} \raiserows{1.5}{\matbox{4}{4}{k}{n}{S}}
-  \newline
-  \newline
-  \newline
-  \matbox{7}{4}{n}{k}{\hat{A}} = 
-  \matbox{7}{4}{n}{k}{U^{\dagger}} \raiserows{1.5}{\matbox{4}{4}{k}{k}{W^{-1}}}
-  \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
-  \label{fig:matdec}
-\end{figure}
 
 \hypertarget{latent-variables-pipeline}{%
 \subsubsection{Latent variables
@@ -757,14 +757,6 @@ also unsurprising that the experiments which incorporated expansions of
 the table 1 words vocabulary (experiments 2 and 4) resulted in higher
 explainability scores than experiments 1 and 3.
 
-We have also reported the results both in aggregate and disaggregated by
-correctness of prediction. We believe the disaggregated results are
-useful because we would expect the classifier to do a poorer job of
-associating table 1 words with the unreliable class when it incorrectly
-classifies an unreliable tweet as reliable. This assumption appears to
-hold based on our results; the ``correctly predicted'' tweets have
-higher explainability scores than the ``wrongly predicted'' ones.
-
 \begin{table}
  \caption{Explainability Scores}
   \centering
@@ -799,6 +791,14 @@ higher explainability scores than the ``wrongly predicted'' ones.
   \end{tabular}
   \label{tab:expl}
 \end{table}
+
+We have also reported the results both in aggregate and disaggregated by
+correctness of prediction. We believe the disaggregated results are
+useful because we would expect the classifier to do a poorer job of
+associating table 1 words with the unreliable class when it incorrectly
+classifies an unreliable tweet as reliable. This assumption appears to
+hold based on our results; the ``correctly predicted'' tweets have
+higher explainability scores than the ``wrongly predicted'' ones.
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}

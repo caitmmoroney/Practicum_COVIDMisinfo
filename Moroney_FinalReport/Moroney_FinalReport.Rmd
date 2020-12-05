@@ -77,22 +77,6 @@ For more details on the performance of different word embedding hyperparameter c
 ## Latent variable methods
 In order to reduce the dimensionality of the data matrix $\mathbf{X}$, we employ latent variable methods. Specifically, we follow the methodology presented in @honkela_wordicaemergence_2010: we apply Principal Component Analysis (PCA) followed by Independent Component Analysis (ICA) to the word-word co-occurrence matrix.
 
-### Dimensionality reduction
-In order to perform PCA, we rescale the data matrix and then apply Singular Value Decomposition (SVD). We first scale the data so that the columns have zero mean and unit variance. The SVD model is as follows:
-$$\mathbf{X = U \Sigma V}^T$$
-where $\mathbf{\Sigma}$ is a diagonal matrix containing the singular values of $\mathbf{X}$, $\mathbf{U}$ is a unitary orthogonal matrix whose columns are the left-singular vectors, and $\mathbf{V}^T$ is a unitary orthogonal matrix whose columns are the right-singular vectors.
-
-To achieve PCA, we can use truncated SVD. In essence, we perform SVD and keep only the columns of $\mathbf{U}$ and $\mathbf{V}^T$ that correspond to the largest $k$ singular values in the diagonal matrix $\mathbf{\Sigma}$, where $k$ is the desired order for the approximation of our initial data matrix. Therefore, if $k$ is less than $m$, we have achieved dimensionality reduction. In our experiments, we use $k \in \{50, 100, 150, 200, 250, 500\}$.
-
-### Independent Component Analysis
-ICA is one method to address the blind source separation problem (also referred to as the blind signal separation problem), which can be represented in matrix form as follows:
-$$\mathbf{X = AS}$$
-@honkela_wordicaemergence_2010 provide an intuitive explanation of the problem in the context of a real-world scenario:
-
-> "... [T]he cocktail party problem is a classical blind signal separation task where heard sound signals are studied as the observed random variables. These are assumed to originate from a number of separate sources, in this case, the discussants in a cocktail party who are speaking at the same time. The heard signals are mixtures of the speech signals with different proportions depending on the relative distance of a listener to each sound source. The task is to separate the original speech signals from the observed mixtures."
-
-In other words, ICA allows us to extract independent signals from the original data matrix. The columns of $\mathbf{X}$ are linear combinations (or mixtures) of the independent components. With the ICA decomposition, we obtain a mixing matrix, $\mathbf{S}$, which contains the weights for each of the independent components which together comprise each of the observed variables, and $\mathbf{A}$, where each column is a latent variable (or independent component).
-
 \begin{figure}
   \centering
   \matbox{7}{7}{n}{n}{X} = 
@@ -120,6 +104,22 @@ In other words, ICA allows us to extract independent signals from the original d
   \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
   \label{fig:matdec}
 \end{figure}
+
+### Dimensionality reduction
+In order to perform PCA, we rescale the data matrix and then apply Singular Value Decomposition (SVD). We first scale the data so that the columns have zero mean and unit variance. The SVD model is as follows:
+$$\mathbf{X = U \Sigma V}^T$$
+where $\mathbf{\Sigma}$ is a diagonal matrix containing the singular values of $\mathbf{X}$, $\mathbf{U}$ is a unitary orthogonal matrix whose columns are the left-singular vectors, and $\mathbf{V}^T$ is a unitary orthogonal matrix whose columns are the right-singular vectors.
+
+To achieve PCA, we can use truncated SVD. In essence, we perform SVD and keep only the columns of $\mathbf{U}$ and $\mathbf{V}^T$ that correspond to the largest $k$ singular values in the diagonal matrix $\mathbf{\Sigma}$, where $k$ is the desired order for the approximation of our initial data matrix. Therefore, if $k$ is less than $m$, we have achieved dimensionality reduction. In our experiments, we use $k \in \{50, 100, 150, 200, 250, 500\}$.
+
+### Independent Component Analysis
+ICA is one method to address the blind source separation problem (also referred to as the blind signal separation problem), which can be represented in matrix form as follows:
+$$\mathbf{X = AS}$$
+@honkela_wordicaemergence_2010 provide an intuitive explanation of the problem in the context of a real-world scenario:
+
+> "... [T]he cocktail party problem is a classical blind signal separation task where heard sound signals are studied as the observed random variables. These are assumed to originate from a number of separate sources, in this case, the discussants in a cocktail party who are speaking at the same time. The heard signals are mixtures of the speech signals with different proportions depending on the relative distance of a listener to each sound source. The task is to separate the original speech signals from the observed mixtures."
+
+In other words, ICA allows us to extract independent signals from the original data matrix. The columns of $\mathbf{X}$ are linear combinations (or mixtures) of the independent components. With the ICA decomposition, we obtain a mixing matrix, $\mathbf{S}$, which contains the weights for each of the independent components which together comprise each of the observed variables, and $\mathbf{A}$, where each column is a latent variable (or independent component).
 
 ### Latent variables pipeline
 \label{sec:LVpipe}
@@ -281,8 +281,6 @@ To assess explainability according to our novel metric, we conducted 4 experimen
 
 Table 1 words refers to words that are listed as examples for linguistic features of misinformation in Table 1 from @boukouvalas_independent_2020. Manual additions are words we added after reviewing the corpus vocabulary and noting terms that fell within one of the 17 linguistic feature categories but were not explicitly provided as examples. Experiment 1 was a strict interpretation of explainability which relied solely on words provided in Table 1 from @boukouvalas_independent_2020; experiment 2 included these words plus our manual additions. Experiments 3 and 4 are different in that we used stemming in order to cast a wider net; for example, if "panic" is a Table 1 word, then stemming (via NLTK's snowball stemmer) allows us to catch any instances of "panicked", "panics", "panicky", etc. It is therefore not surprising that experiments 3 and 4 both show relatively higher explainability scores than the results for experiments 1 and 2. It is also unsurprising that the experiments which incorporated expansions of the table 1 words vocabulary (experiments 2 and 4) resulted in higher explainability scores than experiments 1 and 3.
 
-We have also reported the results both in aggregate and disaggregated by correctness of prediction. We believe the disaggregated results are useful because we would expect the classifier to do a poorer job of associating table 1 words with the unreliable class when it incorrectly classifies an unreliable tweet as reliable. This assumption appears to hold based on our results; the "correctly predicted" tweets have higher explainability scores than the "wrongly predicted" ones.
-
 \begin{table}
  \caption{Explainability Scores}
   \centering
@@ -317,6 +315,8 @@ We have also reported the results both in aggregate and disaggregated by correct
   \end{tabular}
   \label{tab:expl}
 \end{table}
+
+We have also reported the results both in aggregate and disaggregated by correctness of prediction. We believe the disaggregated results are useful because we would expect the classifier to do a poorer job of associating table 1 words with the unreliable class when it incorrectly classifies an unreliable tweet as reliable. This assumption appears to hold based on our results; the "correctly predicted" tweets have higher explainability scores than the "wrongly predicted" ones.
 
 # Discussion
 \label{sec:discuss}
