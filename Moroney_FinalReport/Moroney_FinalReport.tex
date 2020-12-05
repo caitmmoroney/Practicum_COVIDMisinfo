@@ -374,25 +374,41 @@ column is a latent variable (or independent component).
 \subsubsection{Latent variables
 pipeline}\label{latent-variables-pipeline}}
 
-\label{sec:LVpipe} The pipeline involves performing SVD on the initial
-data matrix, \(\mathbf{X}\), such that we can obtain the \(\mathbf{U}\)
-matrix which contains the SVD feature vectors. This matrix is used as
-the input for ICA, so that we have \(\mathbf{U = AS}\). Then,
-\(\mathbf{S}\) is the whitened mixing matrix, and \(\mathbf{A}\)
-contains the ICA features. This process is represented visually in
-Figure \ref{fig:matdec}. We use the estimated \(\mathbf{\hat{A}}\)
-matrix as the input to our classification models.
+\label{sec:LVpipe} We use the scikit-learn implementation of FastICA to
+obtain the word embeddings from the word-context matrix. Because we also
+impose dimensionality reduction, the FastICA algorithm consists of PCA
+followed by ICA decomposition. This process is represented visually in
+Figure \ref{fig:matdec}. We take the estimated \(\mathbf{\hat{S}}\)
+matrix as our word embeddings which we subsequently use to obtain tweet
+embeddings as the inputs to our classification models.
 
 Starting with the word-context matrix, we obtain word embeddings
 comprised of latent variables after first performing truncated SVD.
 These SVD features are linear combinations of the context words taken
-from the original co-occurrence matrix. However, we go a step further in
-order to obtain statistically independent latent variables by applying
-ICA to the \(\mathbf{\hat{U}}\) matrix. This allows us to obtain ICA
-word embeddings from the \(\mathbf{\hat{A}}\) matrix, whose columns are
-linear combinations of the SVD features. The estimated
-\(\mathbf{\hat{S}}\) matrix allows us to access the weights for these
-linear combinations.
+from the original co-occurrence matrix. \(\mathbf{U}\) is of shape
+number of target words by number of SVD features, \(\mathbf{\Sigma}\) is
+a square matrix with \(k\) (equals number of SVD features) singular
+values, and \(\mathbf{V}^T\) is of shape number of SVD features by
+number of context words. In theory, we could take the \(\mathbf{U}\)
+matrix as our word embeddings. However, we go a step further in order to
+obtain statistically independent latent variables by applying ICA to the
+SVD output.
+
+Under the ICA model, we assume \(\mathbf{X} = \mathbf{A} \mathbf{S}\).
+To obtain estimates for \(\mathbf{A}\) and \(\mathbf{S}\), we use the
+SVD output: \[\mathbf{\tilde{X}} = \mathbf{W} \mathbf{\hat{S}}\] where
+\(\mathbf{\tilde{X}} = \mathbf{X} \mathbf{U}\), \(\mathbf{W}\) is the
+mixing matrix, and \(\mathbf{\hat{S}}\) is a matrix of ICA features by
+context words. This allows us to obtain ICA word embeddings from the
+\(\mathbf{\hat{S}}\) matrix, whose rows are linear combinations of the
+SVD features. We use the context word embeddings as our ICA word
+embeddings. Another possibility is to obtain the target word embeddings
+from the \(\mathbf{\hat{A}}\) matrix. Were we to use these embeddings
+instead, we would need to go a step further to obtain
+\(\mathbf{\hat{A}}\):
+\[\mathbf{\hat{A}} = \mathbf{U}^{\dagger} \mathbf{W}^{-1}\] where
+\(\mathbf{U}^{\dagger}\) is the pseudo-inverse of the \(\mathbf{U}\)
+matrix.
 
 \begin{figure}
   \centering
