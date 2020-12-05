@@ -106,18 +106,6 @@ $$\mathbf{X = AS}$$
 
 In other words, ICA allows us to extract independent signals from the original data matrix. The columns of $\mathbf{X}$ are linear combinations (or mixtures) of the independent components. With the ICA decomposition, we obtain a mixing matrix, $\mathbf{S}$, which contains the weights for each of the independent components which together comprise each of the observed variables, and $\mathbf{A}$, where each column is a latent variable (or independent component).
 
-### Latent variables pipeline
-\label{sec:LVpipe}
-We use the scikit-learn implementation of FastICA to obtain the word embeddings from the word-context matrix. Because we also impose dimensionality reduction, the FastICA algorithm consists of PCA followed by ICA decomposition. This process is represented visually in Figure \ref{fig:matdec}. We take the estimated $\mathbf{\hat{S}}$ matrix as our word embeddings which we subsequently use to obtain tweet embeddings as the inputs to our classification models.
-
-Starting with the word-context matrix, we obtain word embeddings comprised of latent variables after first performing truncated SVD. These SVD features are linear combinations of the context words taken from the original co-occurrence matrix. $\mathbf{U}$ is of shape number of target words by number of SVD features, $\mathbf{\Sigma}$ is a square matrix with $k$ (equals number of SVD features) singular values, and $\mathbf{V}^T$ is of shape number of SVD features by number of context words. In theory, we could take the $\mathbf{U}$ matrix as our word embeddings. However, we go a step further in order to obtain statistically independent latent variables by applying ICA to the SVD output.
-
-Under the ICA model, we assume $\mathbf{X} = \mathbf{A} \mathbf{S}$. To obtain estimates for $\mathbf{A}$ and $\mathbf{S}$, we use the SVD output:
-$$\mathbf{\tilde{X}} = \mathbf{W} \mathbf{\hat{S}}$$
-where $\mathbf{\tilde{X}} = \mathbf{X} \mathbf{U}$, $\mathbf{W}$ is the mixing matrix, and $\mathbf{\hat{S}}$ is a matrix of ICA features by context words. This allows us to obtain ICA word embeddings from the $\mathbf{\hat{S}}$ matrix, whose rows are linear combinations of the SVD features. We use the context word embeddings as our ICA word embeddings. Another possibility is to obtain the target word embeddings from the $\mathbf{\hat{A}}$ matrix. Were we to use these embeddings instead, we would need to go a step further to obtain $\mathbf{\hat{A}}$:
-$$\mathbf{\hat{A}} = \mathbf{U}^{\dagger} \mathbf{W}^{-1}$$
-where $\mathbf{U}^{\dagger}$ is the pseudo-inverse of the $\mathbf{U}$ matrix.
-
 \begin{figure}
   \centering
   \matbox{7}{7}{n}{n}{X} = 
@@ -145,6 +133,18 @@ where $\mathbf{U}^{\dagger}$ is the pseudo-inverse of the $\mathbf{U}$ matrix.
   \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
   \label{fig:matdec}
 \end{figure}
+
+### Latent variables pipeline
+\label{sec:LVpipe}
+We use the scikit-learn implementation of FastICA to obtain the word embeddings from the word-context matrix. Because we also impose dimensionality reduction, the FastICA algorithm consists of PCA followed by ICA decomposition. This process is represented visually in Figure \ref{fig:matdec}. We take the estimated $\mathbf{\hat{S}}$ matrix as our word embeddings which we subsequently use to obtain tweet embeddings as the inputs to our classification models.
+
+Starting with the word-context matrix, we obtain word embeddings comprised of latent variables after first performing truncated SVD. These SVD features are linear combinations of the context words taken from the original co-occurrence matrix. $\mathbf{U}$ is of shape number of target words by number of SVD features, $\mathbf{\Sigma}$ is a square matrix with $k$ (equals number of SVD features) singular values, and $\mathbf{V}^T$ is of shape number of SVD features by number of context words. In theory, we could take the $\mathbf{U}$ matrix as our word embeddings. However, we go a step further in order to obtain statistically independent latent variables by applying ICA to the SVD output.
+
+Under the ICA model, we assume $\mathbf{X} = \mathbf{A} \mathbf{S}$. To obtain estimates for $\mathbf{A}$ and $\mathbf{S}$, we use the SVD output:
+$$\mathbf{\tilde{X}} = \mathbf{W} \mathbf{\hat{S}}$$
+where $\mathbf{\tilde{X}} = \mathbf{X} \mathbf{U}$, $\mathbf{W}$ is the mixing matrix, and $\mathbf{\hat{S}}$ is a matrix of ICA features by context words. This allows us to obtain ICA word embeddings from the $\mathbf{\hat{S}}$ matrix, whose rows are linear combinations of the SVD features. We use the context word embeddings as our ICA word embeddings. Another possibility is to obtain the target word embeddings from the $\mathbf{\hat{A}}$ matrix. Were we to use these embeddings instead, we would need to go a step further to obtain $\mathbf{\hat{A}}$:
+$$\mathbf{\hat{A}} = \mathbf{U}^{\dagger} \mathbf{W}^{-1}$$
+where $\mathbf{U}^{\dagger}$ is the pseudo-inverse of the $\mathbf{U}$ matrix.
 
 ## Classification
 In this study, we perform both one-class classification (also referred to as outlier detection) and binary classification in order to automate the detection of unreliable tweets. By using the Twitter dataset produced by @boukouvalas_independent_2020, we can appropriately apply a binary classification model because the dataset was structured as perfectly balanced with 280 reliable tweets and 280 unreliable tweets. However, we believe it is also valid to frame the research question as a one-class classification problem: in the real world, we might expect the number of reliable tweets to far outweigh the number of unreliable tweets. More generally, depending on how we define misinformation, we may see severe imbalance in the ratio of misinformation to reliable information. In such a situation, outlier detection models may be better suited to correctly identifying unreliable content than binary classification models. In terms of algorithms, for outlier detection, we employ one-class support vector machines (OCSVM), isolation forest, and local outlier factor models (LOF). For binary classification, we use binary SVM.
@@ -284,14 +284,17 @@ For binary classification, we show results for our binary SVM experiment. The em
 \end{table}
 
 ## Explainability
-INSERT LIME & ICA EXPLAINABILITY RESULTS HERE (example tweet).
 
-INSERT EXPLANATION OF EXPERIMENTS & STEMMING, ETC. HERE.
+To assess explainability according to our novel metric, we conducted 4 experiments:
 
 - Experiment 1: Only table 1 words
 - Experiment 2: Table 1 words plus manual additions
-- Experiment 3a: Stemming on table 1 words
-- Experiment 3b: Stemming on table 1 words plus manual additions
+- Experiment 3: Stemming on table 1 words
+- Experiment 4: Stemming on table 1 words plus manual additions
+
+Table 1 words refers to words that are listed as examples for linguistic features of misinformation in Table 1 from @boukouvalas_independent_2020. Manual additions are words we added after reviewing the corpus vocabulary and noting terms that fell within one of the 17 linguistic feature categories but were not explicitly provided as examples. Experiment 1 was a strict interpretation of explainability which relied solely on words provided in Table 1 from @boukouvalas_independent_2020; experiment 2 included these words plus our manual additions. Experiments 3 and 4 are different in that we used stemming in order to cast a wider net; for example, if "panic" is a Table 1 word, then stemming (via NLTK's snowball stemmer) allows us to catch any instances of "panicked", "panics", "panicky", etc. It is therefore not surprising that experiments 3 and 4 both show relatively higher explainability scores than the results for experiments 1 and 2. It is also unsurprising that the experiments which incorporated expansions of the table 1 words vocabulary (experiments 2 and 4) resulted in higher explainability scores than experiments 1 and 3.
+
+We have also reported the results both in aggregate and disaggregated by correctness of prediction. We believe the disaggregated results are useful because we would expect the classifier to do a poorer job of associating table 1 words with the unreliable class when it incorrectly classifies an unreliable tweet as reliable. This assumption appears to hold based on our results; the "correctly predicted" tweets have higher explainability scores than the "wrongly predicted" ones.
 
 \begin{table}
  \caption{Explainability Scores}
@@ -312,17 +315,17 @@ INSERT EXPLANATION OF EXPERIMENTS & STEMMING, ETC. HERE.
     \hline
     2: Aggregated & 0.342 & 0.579 \\
     \hline
-    3a: Correctly predicted & \cellcolor{green} 0.396 & 0.593 \\
+    3: Correctly predicted & \cellcolor{green} 0.396 & 0.593 \\
     \hline
-    3a: Wrongly predicted & \cellcolor{green} 0.444 & \cellcolor{green} 0.500 \\
+    3: Wrongly predicted & \cellcolor{green} 0.444 & \cellcolor{green} 0.500 \\
     \hline
-    3a: Aggregated & \cellcolor{green} 0.399 & 0.588 \\
+    3: Aggregated & \cellcolor{green} 0.399 & 0.588 \\
     \hline
-    3b: Correctly predicted & 0.378 & \cellcolor{green} 0.619 \\
+    4: Correctly predicted & 0.378 & \cellcolor{green} 0.619 \\
     \hline
-    3b: Wrongly predicted & 0.148 & 0.407 \\
+    4: Wrongly predicted & 0.148 & 0.407 \\
     \hline
-    3b: Aggregated & 0.367 & \cellcolor{green} 0.608 \\
+    4: Aggregated & 0.367 & \cellcolor{green} 0.608 \\
     \hline
   \end{tabular}
   \label{tab:expl}
@@ -330,8 +333,6 @@ INSERT EXPLANATION OF EXPERIMENTS & STEMMING, ETC. HERE.
 
 # Discussion
 \label{sec:discuss}
-
-- Interpret results
 
 Future work on this subject can pursue several directions. An initial improvement concerns the ICA implementation: FastICA is only one of several ICA algorithms, and it may be worth investigating the use of other ICA algorithms to see whether a different algorithm (for the same model) produces different results. In a similar vein, we might consider conducting multiple ICA runs on the same word-context matrix and then taking the most representative vector representations from those runs. In our current study, we run ICA one time and use those vector representations for the word embeddings.
 

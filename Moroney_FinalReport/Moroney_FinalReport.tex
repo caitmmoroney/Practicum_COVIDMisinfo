@@ -370,6 +370,34 @@ the weights for each of the independent components which together
 comprise each of the observed variables, and \(\mathbf{A}\), where each
 column is a latent variable (or independent component).
 
+\begin{figure}
+  \centering
+  \matbox{7}{7}{n}{n}{X} = 
+  \matbox{7}{4}{n}{k}{U} \raiserows{1.5}{\matbox{4}{4}{k}{k}{\Sigma}}
+  \raiserows{1.5}{\matbox{4}{7}{k}{n}{V^T}}
+  \newline
+  \newline
+  \newline
+  \matbox{7}{7}{n}{n}{X} \matbox{7}{4}{n}{k}{U} = \matbox{7}{4}{n}{k}{\widetilde{X}}
+  \newline
+  \newline
+  \newline
+  {\matbox{4}{7}{k}{n}{\widetilde{X}^T}} = 
+  \matbox{4}{4}{k}{k}{W} \matbox{4}{7}{k}{n}{\hat{S}}
+  \newline
+  \newline
+  \newline
+  \matbox{7}{7}{n}{n}{X} = 
+  \matbox{7}{4}{n}{k}{A} \raiserows{1.5}{\matbox{4}{4}{k}{n}{S}}
+  \newline
+  \newline
+  \newline
+  \matbox{7}{4}{n}{k}{\hat{A}} = 
+  \matbox{7}{4}{n}{k}{U^{\dagger}} \raiserows{1.5}{\matbox{4}{4}{k}{k}{W^{-1}}}
+  \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
+  \label{fig:matdec}
+\end{figure}
+
 \hypertarget{latent-variables-pipeline}{%
 \subsubsection{Latent variables
 pipeline}\label{latent-variables-pipeline}}
@@ -409,34 +437,6 @@ instead, we would need to go a step further to obtain
 \[\mathbf{\hat{A}} = \mathbf{U}^{\dagger} \mathbf{W}^{-1}\] where
 \(\mathbf{U}^{\dagger}\) is the pseudo-inverse of the \(\mathbf{U}\)
 matrix.
-
-\begin{figure}
-  \centering
-  \matbox{7}{7}{n}{n}{X} = 
-  \matbox{7}{4}{n}{k}{U} \raiserows{1.5}{\matbox{4}{4}{k}{k}{\Sigma}}
-  \raiserows{1.5}{\matbox{4}{7}{k}{n}{V^T}}
-  \newline
-  \newline
-  \newline
-  \matbox{7}{7}{n}{n}{X} \matbox{7}{4}{n}{k}{U} = \matbox{7}{4}{n}{k}{\widetilde{X}}
-  \newline
-  \newline
-  \newline
-  {\matbox{4}{7}{k}{n}{\widetilde{X}^T}} = 
-  \matbox{4}{4}{k}{k}{W} \matbox{4}{7}{k}{n}{\hat{S}}
-  \newline
-  \newline
-  \newline
-  \matbox{7}{7}{n}{n}{X} = 
-  \matbox{7}{4}{n}{k}{A} \raiserows{1.5}{\matbox{4}{4}{k}{n}{S}}
-  \newline
-  \newline
-  \newline
-  \matbox{7}{4}{n}{k}{\hat{A}} = 
-  \matbox{7}{4}{n}{k}{U^{\dagger}} \raiserows{1.5}{\matbox{4}{4}{k}{k}{W^{-1}}}
-  \caption{Truncated Singular Value Decomposition followed by Independent Component Analysis.}
-  \label{fig:matdec}
-\end{figure}
 
 \hypertarget{classification}{%
 \subsection{Classification}\label{classification}}
@@ -727,9 +727,8 @@ model experiments, which was 0.671, by over 13 percentage points.
 \hypertarget{explainability}{%
 \subsection{Explainability}\label{explainability}}
 
-INSERT LIME \& ICA EXPLAINABILITY RESULTS HERE (example tweet).
-
-INSERT EXPLANATION OF EXPERIMENTS \& STEMMING, ETC. HERE.
+To assess explainability according to our novel metric, we conducted 4
+experiments:
 
 \begin{itemize}
 \tightlist
@@ -738,10 +737,36 @@ INSERT EXPLANATION OF EXPERIMENTS \& STEMMING, ETC. HERE.
 \item
   Experiment 2: Table 1 words plus manual additions
 \item
-  Experiment 3a: Stemming on table 1 words
+  Experiment 3: Stemming on table 1 words
 \item
-  Experiment 3b: Stemming on table 1 words plus manual additions
+  Experiment 4: Stemming on table 1 words plus manual additions
 \end{itemize}
+
+Table 1 words refers to words that are listed as examples for linguistic
+features of misinformation in Table 1 from Boukouvalas et al. (2020).
+Manual additions are words we added after reviewing the corpus
+vocabulary and noting terms that fell within one of the 17 linguistic
+feature categories but were not explicitly provided as examples.
+Experiment 1 was a strict interpretation of explainability which relied
+solely on words provided in Table 1 from Boukouvalas et al. (2020);
+experiment 2 included these words plus our manual additions. Experiments
+3 and 4 are different in that we used stemming in order to cast a wider
+net; for example, if ``panic'' is a Table 1 word, then stemming (via
+NLTK's snowball stemmer) allows us to catch any instances of
+``panicked'', ``panics'', ``panicky'', etc. It is therefore not
+surprising that experiments 3 and 4 both show relatively higher
+explainability scores than the results for experiments 1 and 2. It is
+also unsurprising that the experiments which incorporated expansions of
+the table 1 words vocabulary (experiments 2 and 4) resulted in higher
+explainability scores than experiments 1 and 3.
+
+We have also reported the results both in aggregate and disaggregated by
+correctness of prediction. We believe the disaggregated results are
+useful because we would expect the classifier to do a poorer job of
+associating table 1 words with the unreliable class when it incorrectly
+classifies an unreliable tweet as reliable. This assumption appears to
+hold based on our results; the ``correctly predicted'' tweets have
+higher explainability scores than the ``wrongly predicted'' ones.
 
 \begin{table}
  \caption{Explainability Scores}
@@ -762,17 +787,17 @@ INSERT EXPLANATION OF EXPERIMENTS \& STEMMING, ETC. HERE.
     \hline
     2: Aggregated & 0.342 & 0.579 \\
     \hline
-    3a: Correctly predicted & \cellcolor{green} 0.396 & 0.593 \\
+    3: Correctly predicted & \cellcolor{green} 0.396 & 0.593 \\
     \hline
-    3a: Wrongly predicted & \cellcolor{green} 0.444 & \cellcolor{green} 0.500 \\
+    3: Wrongly predicted & \cellcolor{green} 0.444 & \cellcolor{green} 0.500 \\
     \hline
-    3a: Aggregated & \cellcolor{green} 0.399 & 0.588 \\
+    3: Aggregated & \cellcolor{green} 0.399 & 0.588 \\
     \hline
-    3b: Correctly predicted & 0.378 & \cellcolor{green} 0.619 \\
+    4: Correctly predicted & 0.378 & \cellcolor{green} 0.619 \\
     \hline
-    3b: Wrongly predicted & 0.148 & 0.407 \\
+    4: Wrongly predicted & 0.148 & 0.407 \\
     \hline
-    3b: Aggregated & 0.367 & \cellcolor{green} 0.608 \\
+    4: Aggregated & 0.367 & \cellcolor{green} 0.608 \\
     \hline
   \end{tabular}
   \label{tab:expl}
@@ -782,12 +807,6 @@ INSERT EXPLANATION OF EXPERIMENTS \& STEMMING, ETC. HERE.
 \section{Discussion}\label{discussion}}
 
 \label{sec:discuss}
-
-\begin{itemize}
-\tightlist
-\item
-  Interpret results
-\end{itemize}
 
 Future work on this subject can pursue several directions. An initial
 improvement concerns the ICA implementation: FastICA is only one of
