@@ -7,7 +7,7 @@ authors:
     location: Washington, DC 20016
     email: cm0246b@american.edu
 abstract: |
-  Enter the text of your abstract here.
+  In this paper, we apply Natural Language Processing (NLP) and machine learning (ML) methods to the task of detecting misinformation. We use a dataset of 560 tweets to train both binary and one-class classification algorithms. NLP techniques allow us to transform the raw tweet text into a vector representation to which we apply latent variable methods in order to create word embeddings. We use the word embeddings to obtain tweet vector representations which are subsequently used as inputs for the classifiers. We also propose a novel explainability metric that allows us to capture an explainability score for a classifier, similar to accuracy or other evaluation metrics.
 keywords:
   - COVID-19
   - coronavirus
@@ -20,26 +20,13 @@ output:
     keep_tex: true
 ---
 
-\newpage
-
 # Introduction
 
-Insert introduction text here.
+Massive volumes of content are posted to social media platforms daily. Many users rely partially or entirely on social media as a source of news and information. This makes the detection of "unreliable" information, or misinformation, a pressing and challenging task. This is especially true of detecting misinformation during high-impact events when information changes rapidly. Clearly, manually labeling content as potentially unreliable is not feasible with the size of the data in question. In this paper, we propose to apply machine learning to the task of classifying misinformation in tweets.
 
-- Misinformation is a big problem, especially on Twitter & social media
-
-In this study, we use "unreliable" to refer to tweets labeled as misinformation and "reliable" to refer to tweets which do not contain misinformation. The data as well as the labeling rules come from @boukouvalas_independent_2020; the authors manually labeled 560 tweets as unreliable or reliable. The tweets were collected from a sample of 282,201 Twitter users in Canada between the dates January 1, 2020 and March 13, 2020. The dataset is balanced for race, gender, and age via Conditional Independence Coupling (CIC) [@boukouvalas_independent_2020].
-
-- randomly undersampled 1,600 tweets with goal of creating balanced reliable/unreliable dataset
-- two experts reviewed tweets against set of rules (link to table in appendix); obtained 280 unreliable tweets
-- randomly undersampled the reliable class in order to have perfectly balanced dataset of 560 tweets total
+In this study, we use "unreliable" to refer to tweets labeled as misinformation and "reliable" to refer to tweets which do not contain misinformation. The data as well as the labeling rules come from @boukouvalas_independent_2020; the authors manually labeled 560 tweets as unreliable or reliable. The tweets were collected from a sample of 282,201 Twitter users in Canada between the dates January 1, 2020 and March 13, 2020. The dataset is balanced for race, gender, and age via Conditional Independence Coupling (CIC) [@boukouvalas_independent_2020]. From this large dataset, two experts reviewed a random sample of 1,600 tweets and created a perfectly balanced dataset of 560 labeled tweets [@boukouvalas_independent_2020].
     
-EXPLAIN THE REST OF THE PROCESS BRIEFLY HERE.
-
-- Word embeddings
-- Latent variable methods: PCA & ICA
-- Binary & one-class classification using SVM
-- Implementation done in Python (footnote linking to code page)
+We apply NLP techniques to the raw tweet text in order to obtain a vector representation of the text data. We then use latent variable methods, Principal Component Analysis (PCA) and Independent Component Analysis (ICA), in order to reduce the dimensionality of our data and to obtain statistically independent features. We subsequently implement both binary and one-class classification. Implementation is in Python.^[Please see [the GitHub repo](https://github.com/caitmmoroney/Practicum_COVIDMisinfo/tree/main/Code) for the original code.]
 
 The rest of the paper is organized as follows: Section \ref{sec:methods} discusses our methodology; Section \ref{sec:results} presents the results of our experiments; Section \ref{sec:discuss} discusses our results and plans for future work.
 
@@ -93,7 +80,7 @@ In order to reduce the dimensionality of the data matrix $\mathbf{X}$, we employ
 ### Dimensionality reduction
 In order to perform PCA, we rescale the data matrix and then apply Singular Value Decomposition (SVD). We first scale the data so that the columns have zero mean and unit variance. The SVD model is as follows:
 $$\mathbf{X = U \Sigma V}^T$$
-where $\mathbf{\Sigma}$ is a diagonal matrix containing the singular values of $\mathbf{X}$, $\mathbf{U}$ is BLAH, and $\mathbf{V}^T$ is BLAHBLAH.
+where $\mathbf{\Sigma}$ is a diagonal matrix containing the singular values of $\mathbf{X}$, $\mathbf{U}$ is a unitary orthogonal matrix whose columns are the left-singular vectors, and $\mathbf{V}^T$ is a unitary orthogonal matrix whose columns are the right-singular vectors.
 
 To achieve PCA, we can use truncated SVD. In essence, we perform SVD and keep only the columns of $\mathbf{U}$ and $\mathbf{V}^T$ that correspond to the largest $k$ singular values in the diagonal matrix $\mathbf{\Sigma}$, where $k$ is the desired order for the approximation of our initial data matrix. Therefore, if $k$ is less than $m$, we have achieved dimensionality reduction. In our experiments, we use $k \in \{50, 100, 150, 200, 250, 500\}$.
 
